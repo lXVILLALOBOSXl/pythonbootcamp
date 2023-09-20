@@ -31,7 +31,6 @@ playing = True
 while playing:
     difficulty = input("Choose a difficulty. Type 'easy' or 'hard': ").lower()
     number_to_guess = random.randint(1,100)
-    print(f"Pssst, the correct answer is {number_to_guess}")
     if difficulty == "easy" or difficulty == "hard":
         play(number_to_guess,difficulty)
         playing = False
