@@ -9,12 +9,7 @@ player = []
 computer = []
 
 def remove_card(key,index):
-    #if not isinstance(index, str):
     cards[key].pop(index)
-    #else:
-        #cards[key].remove(index)
-
-
 
 import random
 
@@ -70,12 +65,10 @@ while continue_playing:
     random_card(player,computer=False)
     random_card(player,computer=False)
     print("Your cards: " + str(player))
-
     random_card(computer,computer=True)
     random_card(computer,computer=True)
-    print("Computer's first card: " + str(computer[0]))
+    print("Computer's first card: ['" + str(computer[0]) + "']")
     
-
     while more_cards:
         option = input("Type 'y' to get another card, type 'n' to pass: ").lower()
         if option == 'y':
@@ -87,7 +80,6 @@ while continue_playing:
             print("Your final hand: " + str(player))
             print("Computer's final hand: " + str(computer))
 
-
         player_points = get_points(player)
         computer_points = get_points(computer)
 
@@ -95,7 +87,6 @@ while continue_playing:
             print("Computer's final hand: " + str(computer))
         elif more_cards:
             print("Computer cards: " + str(computer[0:len(player) - 1]))
-
 
         if player_points >= 21 or computer_points >= 21 or not more_cards:
 
@@ -106,7 +97,6 @@ while continue_playing:
                 print("Computer win")
             else:
                 print("Nobody win, was a tie")
-        
 
     option = input("Do you want to play a game of Blackjack? Type 'y' or 'n': ").lower()
     if option != 'y':
