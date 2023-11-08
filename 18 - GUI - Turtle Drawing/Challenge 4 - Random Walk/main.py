@@ -36,3 +36,4 @@ for i in range(1, random_number):
         angle = random.randint(1, 360)
         pencil.right(angle)
 
+screen.exitonclick()

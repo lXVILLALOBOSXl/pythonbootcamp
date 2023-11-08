@@ -53,3 +53,5 @@ for i in range(1, random_number):
         draw_circle(pencil, random_color(), random.randint(10, 300)/2)
     pencil.penup()
     pencil.goto(random.randint(-x_limit, x_limit), random.randint(-y_limit, y_limit))
+
+screen.exitonclick()

@@ -2,6 +2,7 @@
 
 import turtle as t
 
+screen = t.Screen()
 timmy_the_turtle = t.Turtle()
 timmy_the_turtle.shape("turtle")
 timmy_the_turtle.color("red")
@@ -23,3 +24,5 @@ def corner(turtle):
 timmy_the_turtle.clear()
 for i in range(1, 3):
     corner(timmy_the_turtle)
+
+screen.exitonclick()

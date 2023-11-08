@@ -1,6 +1,7 @@
 import turtle as t
 import random
 
+screen = t.Screen()
 pencil = t.Turtle()
 t.colormode(255)
 
@@ -27,3 +28,6 @@ pencil.speed("fastest")
 pencil.color(random_color())
 write_spirograph(pencil, 100, 50, 10)
 print("a")
+
+screen.exitonclick()
+

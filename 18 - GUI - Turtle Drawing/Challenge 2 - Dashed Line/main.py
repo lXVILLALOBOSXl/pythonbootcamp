@@ -1,5 +1,6 @@
 import turtle as t
 
+screen = t.Screen()
 tim = t.Turtle()
 tim.shape("turtle")
 
@@ -16,3 +17,5 @@ def draw_dash_line(turtle, distance, color):
 
 for i in range(1, 51):
     draw_dash_line(tim, 10, "red")
+
+screen.exitonclick()
