@@ -1,79 +1,65 @@
-from turtle import Turtle, Screen
+from turtle import Screen, Turtle
+
+screen = Screen()
+screen.bgcolor("black")
+screen.title("Pong Game")
+screen_height = screen.window_height()
+screen_width = screen.window_width()
 
 
 class Ball(Turtle):
-    def __init__(self, color):
+    def __init__(self):
         super().__init__()
-        self.hideturtle()
-        self.color(color)
-
-
-class Racket(Turtle):
-    def __init__(self, color, side, width, height):
-        super().__init__()
-        self.hideturtle()
         self.penup()
-        self.width(20)
-        self.color(color)
-        self.setheading(270)
-        if side == "left":
-            self.goto(x=((width / 2) * -1) + 20, y=(height / 8))
+        self.shape("circle")
+        self.color("white")
+
+    def move(self):
+        pass
+
+
+class Paddle(Turtle):
+    def __init__(self, side):
+        super().__init__()
+        self.setheading(90)
+        self.penup()
+        self.shape("square")
+        self.color("white")
+        self.width = self.shapesize()[0] * 20  # 20 px is the default size of width and height's turtle
+        self.height = (screen_height / (3 * self.shapesize()[0] * 20)) * 20
+        self.shapesize(stretch_wid=self.width / 20, stretch_len=self.height / 20)
+        if side == "right":
+            self.setposition(x=(screen_width / 2) - 50, y=0)
         else:
-            self.goto(x=(width / 2) - 30, y=(height / 8))
-        self.pendown()
-        self.forward((height / 8) * 2)
+            self.setposition(x=(screen_width / 2) * -1 + 40, y=0)
 
+    def move_up(self):
+        if (self.ycor() + 10) + (screen_height / 6) <= (screen_height / 2):
+            self.forward(20)
 
-class ScoreBoard(Turtle):
-    def __init__(self, height, color, points_p1, points_p2):
-        super().__init__()
-        self.hideturtle()
-        self.penup()
-        self.goto(x=0, y=(height / 2) - 40)
-        self.color(color)
-        self.write(f"{points_p1}\t{points_p2}", align="center", font=("Arial", 26, "normal"))
-
-
-class Player:
-    def __init__(self, racket):
-        self.racket = racket
-        self.points = 0
+    def move_down(self):
+        if (self.ycor() - 20) - (screen_height / 6) >= (screen_height / 2)*-1:
+            self.backward(20)
 
 
 class Pong:
-
-    def __init__(self, court_color, items_color):
-        self.is_over = False
-        self._init_screen_(court_color, items_color)
-        self.racket1 = Racket(items_color, "left", self.width, self.height)
-        self.racket2 = Racket(items_color, "right", self.width, self.height)
-        self.player1 = Player(self.racket1)
-        self.player2 = Player(self.racket2)
-        self.score_board = ScoreBoard(self.height, items_color, self.player1.points, self.player2.points)
-        self.ball = Ball(items_color)
-
-    def _init_screen_(self, color, net_color):
-        self.screen = Screen()
-        self.screen.delay(0)
-        self.screen.bgcolor(color)
-        self.screen.title("Pong Game")
-        self.width = self.screen.window_width()
-        self.height = self.screen.window_height()
-        self._print_net(net_color)
-
-    def _print_net(self, color):
-        self.net = Turtle()
-        self.net.hideturtle()
-        self.net.width(20)
-        self.net.color(color)
-        self.net.penup()
-        self.net.setheading(270)
-        self.net.goto(x=0, y=self.height / 2)
-        while self.net.ycor() >= (self.height / 2) * -1:
-            self.net.pendown()
-            self.net.forward(20)
-            self.net.penup()
-            self.net.forward(40)
+    def __init__(self):
+        screen.tracer(0)
+        paddle1 = Paddle("left")
+        paddle2 = Paddle("right")
+        screen.listen()
+        screen.onkey(key="w", fun=paddle1.move_up)
+        screen.onkey(key="s", fun=paddle1.move_down)
+        screen.onkey(key="Up", fun=paddle2.move_up)
+        screen.onkey(key="Down", fun=paddle2.move_down)
+        ball = Ball()
+        ball.move()
+        self.game_over = False
+        screen.update()
+        # screen.exitonclick()
 
     def refresh(self):
-        self.screen.update()
+        screen.update()
+
+    def exit(self):
+        screen.exitonclick()

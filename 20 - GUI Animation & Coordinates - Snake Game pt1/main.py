@@ -23,7 +23,7 @@ def move_left():
 screen.listen()
 screen.onkey(key="w", fun=move_up)
 screen.onkey(key="d", fun=move_right)
-screen.onkey(key="s", fun=move_down)
+screen.onkeypress(key="s", fun=move_down)
 screen.onkey(key="a", fun=move_left)
 
 while True:
