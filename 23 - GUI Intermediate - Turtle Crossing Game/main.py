@@ -9,12 +9,13 @@ from scoreboard import Scoreboard
 screen = Screen()
 screen.setup(width=600, height=600)
 screen.tracer(0)
+screen.title("Turtle Crossing Game")
 
 player = Player()
 screen.listen()
-screen.onkey(key="w", fun=player.move_forward)
-screen.onkey(key="a", fun=player.move_left)
-screen.onkey(key="d", fun=player.move_right)
+screen.onkey(key="Up", fun=player.move_forward)
+screen.onkey(key="Left", fun=player.move_left)
+screen.onkey(key="Right", fun=player.move_right)
 
 level = 1
 scoreboard = Scoreboard(level)
