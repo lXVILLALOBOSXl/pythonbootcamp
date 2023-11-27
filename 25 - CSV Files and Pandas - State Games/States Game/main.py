@@ -22,6 +22,12 @@ while len(data) > 1:
 
     expected_state = data[data.state.str.lower() == answer_state.lower()]
 
+    if answer_state == "exit":
+        missing_states = [state for state in data.state]
+        new_data = pandas.DataFrame(missing_states)
+        new_data.to_csv("states_to_learn.csv")
+        break
+
     if len(expected_state) > 0:
         answered_states += 1
         data = data[data.state.str.lower() != answer_state.lower()]
