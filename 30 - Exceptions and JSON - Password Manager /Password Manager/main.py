@@ -87,7 +87,7 @@ def search():
         messagebox.showerror(title="Not found", message="There is no data saved yet")
     else:
         try:
-            website = website_entry.get()
+            website = website_entry.get().lower()
             datum = data[website]
         except KeyError:
             messagebox.showerror(title="Not found", message="Datum doesn't exist")
