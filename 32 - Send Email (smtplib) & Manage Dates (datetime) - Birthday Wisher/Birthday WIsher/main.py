@@ -12,6 +12,7 @@ import random
 import datetime as dt
 import smtplib
 import pandas
+import os
 
 #Read data
 data = pandas.read_csv("info.csv")
@@ -27,7 +28,8 @@ for index, row in data.iterrows():
     data_array.append(person)
 
 my_email = "oslovdobrov@gmail.com"
-password = ""
+password = os.environ.get("OSLO_MAIL_KEY")
+
 
 for person in data_array:
     if dt.datetime.now().month == person["birthday"].month and dt.datetime.now().day == person["birthday"].day:

@@ -1,7 +1,9 @@
 # import smtplib
+# import os
 
 # my_email = "oslovdobrov@gmail.com"
-# password = "qtcndteeboeibrwn"
+# password = os.environ.get("OSLO_MAIL_KEY")
+
 
 # with smtplib.SMTP("smtp.gmail.com", port=587) as connection:
 #     connection.starttls()
@@ -26,6 +28,7 @@
 # print(date_of_birth)
 
 import random
+import os
 import datetime as dt
 import smtplib
 
@@ -37,7 +40,7 @@ if weekday == 0:
             random_quote = random.choice(quotes)
 
     my_email = "oslovdobrov@gmail.com"
-    password = "qtcndteeboeibrwn"
+    password = os.environ.get("OSLO_MAIL_KEY")
 
     with smtplib.SMTP("smtp.gmail.com", port=587) as connection:
         connection.starttls()
