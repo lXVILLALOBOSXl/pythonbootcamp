@@ -56,6 +56,7 @@ def get_stock_data(parameters):
 
 # Returns the close values in stock data for the specified dates  
 def get_close_stock_points(data, *args):
+    global points
     points = []
     for date in args:
         points.append(float(data['Time Series (Daily)'][date]['4. close']))
@@ -69,16 +70,12 @@ try:
     # Gets the closes values for yesterday and one day before yesterday
     today = datetime.now()
     yesterday = (today - timedelta(days=1)).strftime('%Y-%m-%d')
-    before = (today - timedelta(days=4)).strftime('%Y-%m-%d')
+    before = (today - timedelta(days=2)).strftime('%Y-%m-%d')
 
     points = get_close_stock_points(stock_data, yesterday, before) 
 except:
     print(f"Error has occured trying get stock data")
 
-
-today = datetime.now()
-yesterday = (today - timedelta(days=1)).strftime('%Y-%m-%d')
-before = (today - timedelta(days=4)).strftime('%Y-%m-%d')
 
 # Checks if the close values are too different
 difference = abs(points[0] - points[1])
