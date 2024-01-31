@@ -30,7 +30,7 @@ try:
             message = client.messages.create(
                 from_='+12706068224',
                 body="It's going to rain today. Remember to bring an Umbrella ☔️",
-                to='+523313506904'
+                to=''
             )
             print(message.status)
             break
