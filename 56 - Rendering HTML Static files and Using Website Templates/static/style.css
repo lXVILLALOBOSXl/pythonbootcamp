@@ -1,0 +1,19 @@
+html{
+    text-align: center;
+    background-color: blue;
+    padding: 50px 10px 50px 10px;
+    align-items: center;
+}
+
+img{
+    border: 5px solid white;
+}
+
+.title{
+    color: white;
+    font-size: 3rem;
+}
+
+.action{
+    color: white;
+}
