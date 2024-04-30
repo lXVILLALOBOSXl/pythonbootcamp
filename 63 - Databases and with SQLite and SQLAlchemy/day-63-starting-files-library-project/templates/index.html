@@ -1,0 +1,47 @@
+{% extends 'base.html' %} {% block title %}Library{% endblock %} {% block
+content %}
+<div class="jumbotron text-center">
+  <div class="container">
+    <h1 class="display-4">My Library</h1>
+    <table class="table table-dark table-striped table-hover">
+      <!-- This is where you will write the code to render a Bootstrap 
+    Table that contains all the information from the 
+    cafe-data.csv file. -->
+      {% if books: %}
+      <tr>
+        <th></th>
+        <th>Book title</th>
+        <th>Book author</th>
+        <th>Book rating</th>
+        <th></th>
+      </tr>
+      {% for book in books %}
+      <tr>
+        <td>
+          <a href=" {{ url_for('delete',name=book.title) }} " role="button"
+            >Delete</a
+          >
+        </td>
+        <td>{{ book.title }}</td>
+        <td>{{ book.author }}</td>
+        <td>{{ book.rating }}</td>
+        <td>
+          <a href=" {{ url_for('edit',name=book.title,rating=book.rating) }} " role="button"
+            >Edit rating</a
+          >
+        </td>
+      </tr>
+      {% endfor %} {% else: %}
+      <p>No books found.</p>
+      {% endif %}
+    </table>
+    <a
+      class="btn btn-warning btn-lg"
+      href=" {{ url_for('add') }} "
+      role="button"
+      >Add New Book</a
+    >
+  </div>
+</div>
+
+{% endblock %}
