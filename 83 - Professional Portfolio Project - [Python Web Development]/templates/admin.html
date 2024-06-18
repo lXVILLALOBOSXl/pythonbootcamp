@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block title %}Admin{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <a href="{{ url_for('home') }}" style="text-decoration: none; color: inherit;"><h1>My Projects</h1></a>
+        <a href="{{ url_for('logout') }}" class="btn btn-outline-secondary">Logout</a>
+      </div>
+
+      <table class="table table-dark table-striped table-hover">
+        <thead>
+          <tr>
+            <th scope="col">Title</th>
+            <th scope="col">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for project in projects %}
+          <tr>
+            <td>{{ project.title }}</td>
+            <td>
+              <a href="{{ url_for('edit', id=project.id) }}" class="btn btn-sm btn-warning">Update</a>
+              <a href="{{ url_for('delete', id=project.id) }}" class="btn btn-sm btn-danger">Delete</a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <div class="mt-4">
+        <a href="{{ url_for('add') }}" class="btn btn-primary">Add a new project</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

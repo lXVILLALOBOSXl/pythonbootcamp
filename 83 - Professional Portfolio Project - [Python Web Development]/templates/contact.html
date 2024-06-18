@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% from 'bootstrap5/form.html' import render_form %}
+{% block title %}Contact{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <a href="{{ url_for('home') }}" style="text-decoration: none; color: inherit;"><h1>My Projects</h1></a>
+    <p class="text-center mb-5">Contact</p>
+  
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-body">
+          {{ render_form(form) }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
