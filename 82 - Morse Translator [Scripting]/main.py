@@ -13,6 +13,9 @@ def main():
     print(f'message in morse is: {code}')
     pass
 
+if __name__ == '__main__':
+    main()
+
 # if __name__ == '__main__':
 #     main()
 
