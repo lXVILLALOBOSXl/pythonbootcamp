@@ -81,6 +81,11 @@ def get_all_cafes():
     cafes_list = [cafe.to_dict() for cafe in all_cafes]
     return jsonify(cafes=cafes_list)
 
+@app.route("/cafe/<int:cafe_id>")
+def get_cafe_by_id(cafe_id):
+    cafe = Cafe.query.get_or_404(cafe_id)
+    return jsonify(cafe=cafe.to_dict())
+
 @app.route("/search")
 def get_cafe_at_location():
     location = request.args.get("loc")
@@ -116,18 +121,23 @@ def post_new_cafe():
         return jsonify(error={"Forbidden": "Sorry, that's not allowed. Make sure you have the correct api_key."}), 403
 
 # HTTP PUT/PATCH - Update Record
-@app.route("/update-price/<int:cafe_id>", methods=["PATCH"])
-def patch_new_price(cafe_id):
-    new_price = request.args.get("new_price")
-    cafe = db.get_or_404(Cafe, cafe_id)
-    if cafe:
-        cafe.coffee_price = new_price
+@app.route("/edit/<int:cafe_id>", methods=["PATCH"])
+def edit_cafe(cafe_id):
+    api_key = request.args.get("api-key")
+    if api_key == "TopSecretAPIKey":
+        cafe = Cafe.query.get_or_404(cafe_id)
+        for key in request.form:
+            value = request.form[key]
+            if hasattr(cafe, key):
+                if value.lower() == 'true':
+                    value = True
+                elif value.lower() == 'false':
+                    value = False
+                setattr(cafe, key, value)
         db.session.commit()
-        ## Just add the code after the jsonify method. 200 = Ok
-        return jsonify(response={"success": "Successfully updated the price."}), 200
+        return jsonify(response={"success": "Successfully updated the cafe."}), 200
     else:
-        #404 = Resource not found
-        return jsonify(error={"Not Found": "Sorry a cafe with that id was not found in the database."}), 404
+        return jsonify(error={"Forbidden": "Sorry, that's not allowed. Make sure you have the correct api_key."}), 403
 
 # HTTP DELETE - Delete Record
 @app.route("/report-closed/<int:cafe_id>", methods=["DELETE"])
