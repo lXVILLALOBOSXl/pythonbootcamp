@@ -1,0 +1,96 @@
+{% include "header.html" %}
+
+<!-- Main Content-->
+<div class="container px-4 px-lg-5">
+  <div class="row gx-4 gx-lg-5 justify-content-center">
+    <div class="col-md-10 col-lg-8 col-xl-7">
+      <!-- Tasks View -->
+
+      <!-- Pending Tasks -->
+      <div class="accordion mb-4" id="pendingTasksAccordion">
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="headingPending">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePending" aria-expanded="true" aria-controls="collapsePending">
+              Pending Tasks
+            </button>
+          </h2>
+          <div id="collapsePending" class="accordion-collapse collapse show" aria-labelledby="headingPending" data-bs-parent="#pendingTasksAccordion">
+            <div class="accordion-body">
+              {% for task in all_tasks if task.status == 'pending' %}
+              <div class="card mb-4">
+                <div class="card-body">
+                  <h3 class="card-title">{{ task.title }}</h3>
+                  <p class="card-text">{{ task.description|safe }}</p>
+                  <p class="card-text"><small class="text-muted">Due Date: {{ task.due_date }}</small></p>
+                  <a href="{{ url_for('start_task', task_id=task.task_id) }}" class="btn btn-success">Start</a>
+                  <a href="{{ url_for('edit_task', task_id=task.task_id) }}" class="btn btn-primary">Edit</a>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- In Progress Tasks -->
+      <div class="accordion mb-4" id="inProgressTasksAccordion">
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="headingInProgress">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseInProgress" aria-expanded="false" aria-controls="collapseInProgress">
+              In Progress Tasks
+            </button>
+          </h2>
+          <div id="collapseInProgress" class="accordion-collapse collapse" aria-labelledby="headingInProgress" data-bs-parent="#inProgressTasksAccordion">
+            <div class="accordion-body">
+              {% for task in all_tasks if task.status == 'in_progress' %}
+              <div class="card mb-4">
+                <div class="card-body">
+                  <h3 class="card-title">{{ task.title }}</h3>
+                  <p class="card-text">{{ task.description|safe }}</p>
+                  <p class="card-text"><small class="text-muted">Due Date: {{ task.due_date }}</small></p>
+                  <a href="{{ url_for('complete_task', task_id=task.task_id) }}" class="btn btn-success">Complete</a>
+                  <a href="{{ url_for('cancel_task', task_id=task.task_id) }}" class="btn btn-danger">Cancel</a>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Completed Tasks -->
+      <div class="accordion mb-4" id="completedTasksAccordion">
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="headingCompleted">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCompleted" aria-expanded="false" aria-controls="collapseCompleted">
+              Completed Tasks
+            </button>
+          </h2>
+          <div id="collapseCompleted" class="accordion-collapse collapse" aria-labelledby="headingCompleted" data-bs-parent="#completedTasksAccordion">
+            <div class="accordion-body">
+              {% for task in all_tasks if task.status == 'completed' %}
+              <div class="card mb-4">
+                <div class="card-body">
+                  <h3 class="card-title">{{ task.title }}</h3>
+                  <p class="card-text">{{ task.description|safe }}</p>
+                  <p class="card-text"><small class="text-muted">Due Date: {{ task.due_date }}</small></p>
+                  <a href="{{ url_for('delete_task', task_id=task.task_id) }}" class="btn btn-danger">Delete</a>
+                  <a href="{{ url_for('undo_task', task_id=task.task_id) }}" class="btn btn-warning">Undo</a>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- New Task -->
+      <div class="d-flex justify-content-end mb-4">
+        <a class="btn btn-primary float-right" href="{{ url_for('add_new_task') }}">Create New Task</a>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+{% include "footer.html" %}
