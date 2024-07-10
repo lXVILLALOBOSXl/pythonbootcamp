@@ -1,0 +1,52 @@
+.card-img-top {
+    width: 100%;
+    height: auto;
+    max-height: 200px;  /* Ajusta este valor según tus necesidades */
+    object-fit: cover;  /* Ajusta la imagen para que se recorte sin distorsionarse */
+}
+.top-bar {
+    background-color: #f8f9fa;
+    padding: 5px 0;
+    text-align: center;
+}
+.top-bar a {
+    color: #007bff;
+    margin-right: 15px;
+    text-decoration: none;
+}
+.navbar {
+    background-color: #e9ecef;
+}
+.navbar .container {
+    max-width: 90%;
+}
+.navbar-nav {
+    margin-left: auto;
+}
+.navbar-form {
+    margin-right: 15px;
+}
+
+.row.flex-nowrap.overflow-auto {
+    overflow-x: scroll;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+  
+  .row.flex-nowrap.overflow-auto::-webkit-scrollbar {
+    display: none;  /* Chrome, Safari, and Opera */
+  }
+  
+  .arrow-container {
+    text-align: right;
+    position: relative;
+    z-index: 1;
+    top: -20px;  /* Adjust this value to position the arrows higher */
+  }
+  
+  .arrow {
+    cursor: pointer;
+    font-size: 24px;
+    padding: 10px;
+    color: #000;  /* Adjust the color as needed */
+  }

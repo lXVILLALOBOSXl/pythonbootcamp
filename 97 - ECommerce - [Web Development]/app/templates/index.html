@@ -1,0 +1,133 @@
+{% include "header.html" %}
+
+{% block content %}
+<!-- Main Banner -->
+<div class="container-fluid p-0">
+  <div class="row justify-content-center mt-3">
+    <div class="col-11">
+      <div id="mainCarousel" class="carousel slide" data-bs-ride="carousel" style="overflow: hidden; margin: auto;">
+        <div class="carousel-inner" style="height: 300px;">
+          <div class="carousel-item active">
+            <img src="{{ url_for('static', filename='img/banner1.jpg') }}" class="d-block w-100" alt="Banner 1" style="object-fit: cover; height: 100%;">
+          </div>
+          <div class="carousel-item">
+            <img src="{{ url_for('static', filename='img/banner2.jpg') }}" class="d-block w-100" alt="Banner 2" style="object-fit: cover; height: 100%;">
+          </div>
+          <div class="carousel-item">
+            <img src="{{ url_for('static', filename='img/banner3.jpg') }}" class="d-block w-100" alt="Banner 3" style="object-fit: cover; height: 100%;">
+          </div>
+        </div>
+        <button class="carousel-control-prev custom-carousel-control" type="button" data-bs-target="#mainCarousel" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon custom-carousel-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next custom-carousel-control" type="button" data-bs-target="#mainCarousel" data-bs-slide="next">
+          <span class="carousel-control-next-icon custom-carousel-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    <!-- Products Section -->
+    <div class="container-fluid mt-5 py-5 bg-light">
+      <div class="row justify-content-center">
+        <div class="col-11 text-center">
+          <h2 class="mb-3">Nuestros Productos</h2>
+          <p class="mb-4">Descubra nuestra amplia gama de productos para su laboratorio.</p>
+        </div>
+      </div>
+      <div class="row justify-content-center">
+        <div class="col-11">
+          <div class="arrow-container">
+            <span class="arrow" onclick="scrollContainerLeft('productsContainer')">&#9664;</span>
+            <span class="arrow" onclick="scrollContainerRight('productsContainer')">&#9654;</span>
+          </div>
+          <div id="productsContainer" class="row flex-nowrap overflow-auto">
+            {% for product in products %}
+            <div class="col-12 col-md-4 mb-4">
+              <div class="card shadow-sm">
+                <img src="{{ url_for('static', filename='img/' ~ product.img_src) }}" class="card-img-top" alt="{{ product.name }}">
+                <div class="card-body">
+                  <h5 class="card-title">{{ product.name }}</h5>
+                  <p class="card-text">{{ product.description }}</p>
+                  <p class="card-text"><strong>Precio: MX${{ product.price }}</strong></p>
+                  <a href="#" class="btn btn-primary">Agregar al carrito</a>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Offers Section -->
+    <div class="container-fluid mt-5 py-5 bg-secondary text-white">
+      <div class="row justify-content-center">
+        <div class="col-11 text-center">
+          <h2 class="mb-3">Ofertas</h2>
+        </div>
+      </div>
+      <div class="row justify-content-center">
+        <div class="col-11">
+          <div class="arrow-container">
+            <span class="arrow" onclick="scrollContainerLeft('offersContainer')">&#9664;</span>
+            <span class="arrow" onclick="scrollContainerRight('offersContainer')">&#9654;</span>
+          </div>
+          <div id="offersContainer" class="row flex-nowrap overflow-auto">
+            {% for product in offers %}
+            <div class="col-12 col-md-4 mb-4">
+              <div class="card shadow-sm">
+                <img src="{{ url_for('static', filename='img/' ~ product.img_src) }}" class="card-img-top" alt="{{ product.name }}">
+                <div class="card-body">
+                  <h5 class="card-title">{{ product.name }}</h5>
+                  <p class="card-text">{{ product.description }}</p>
+                  <p class="card-text"><strong>Precio: MX${{ product.price }}</strong></p>
+                  <a href="#" class="btn btn-primary">Agregar al carrito</a>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- New Products Section -->
+    <div class="container-fluid mt-5 py-5 bg-light">
+      <div class="row justify-content-center">
+        <div class="col-11 text-center">
+          <h2 class="mb-3">Productos nuevos</h2>
+        </div>
+      </div>
+      <div class="row justify-content-center">
+        <div class="col-11">
+          <div class="arrow-container">
+            <span class="arrow" onclick="scrollContainerLeft('newProductsContainer')">&#9664;</span>
+            <span class="arrow" onclick="scrollContainerRight('newProductsContainer')">&#9654;</span>
+          </div>
+          <div id="newProductsContainer" class="row flex-nowrap overflow-auto">
+            {% for product in new_products %}
+            <div class="col-12 col-md-4 mb-4">
+              <div class="card shadow-sm">
+                <img src="{{ url_for('static', filename='img/' ~ product.img_src) }}" class="card-img-top" alt="{{ product.name }}">
+                <div class="card-body">
+                  <h5 class="card-title">{{ product.name }}</h5>
+                  <p class="card-text">{{ product.description }}</p>
+                  <p class="card-text"><strong>Precio: MX${{ product.price }}</strong></p>
+                  <a href="#" class="btn btn-primary">Agregar al carrito</a>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+    
+
+{% endblock %}
+
+{% include "footer.html" %}
