@@ -1,0 +1,54 @@
+{% include "header.html" %}
+
+{% block content %}
+
+<!-- Product Section -->
+<div class="container-fluid mt-5 py-5 bg-light">
+    <div class="row justify-content-center">
+      <div class="col-11">
+        <div class="row">
+          <div class="col-12 col-md-6 mb-4">
+            <img src="{{ url_for('static', filename='img/' ~ product.img_src) }}" class="img-fluid" alt="{{ product.name }}">
+          </div>
+          <div class="col-12 col-md-6 d-flex flex-column">
+            <h3>{{ product.name }}</h3>
+            <p><strong>SKU Interno:</strong> {{ product.internal_sku }}</p>
+            <p><strong>SKU de la Marca:</strong> {{ product.brand_sku }}</p>
+            <p class="card-text">Stock: 
+              {% if product.units_in_stock > 0 %}
+              <span class="text-success">{{ product.units_in_stock }} disponibles</span>
+              <select class="form-select mt-2" aria-label="Cantidad de piezas">
+                {% for i in range(1, product.units_in_stock + 1) %}
+                <option value="{{ i }}">{{ i }}</option>
+                {% endfor %}
+              </select>
+              {% else %}
+              <span class="text-danger">Agotado</span>
+              {% endif %}
+            </p>
+            <p><strong>Precio:</strong> 
+              {% if product.old_price %}
+              <span class="text-danger"><s>MX${{ product.old_price }}</s></span>
+              <span class="text-success">MX${{ product.price }}</span>
+              {% else %}
+              <span>MX${{ product.price }}</span>
+              {% endif %}
+            </p>
+            <p><strong>Descripción:</strong> {{ product.description }}</p>
+            <div class="mt-auto">
+              {% if product.units_in_stock > 0 %}
+              <a href="{{ url_for('main.add_product', id=product.id) }}" class="btn btn-primary">Agregar al carrito</a>
+              {% else %}
+              <a href="{{ url_for('main.notify_me', id=product.id) }}" class="btn btn-warning">Notificarme de nuevas existencias</a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+{% endblock %}
+
+{% include "footer.html" %}

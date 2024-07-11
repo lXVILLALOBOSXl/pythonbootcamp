@@ -1,0 +1,19 @@
+{% from "bootstrap5/form.html" import render_form %}
+
+{% block content %}
+{% include "header.html" %}
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <h2 class="mb-3 text-center">Nos contactaremos pronto para satisfacer sus demandas.</h2>
+      <div class="card shadow-sm p-4">
+        <div class="card-body">
+          {{ render_form(form) }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+

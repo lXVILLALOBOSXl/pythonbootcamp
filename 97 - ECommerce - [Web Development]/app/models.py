@@ -3,16 +3,19 @@ from . import db
 
 class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)  
+    name = db.Column(db.String(100), nullable=False)
     internal_sku = db.Column(db.String(50), unique=True, nullable=False)
     brand_sku = db.Column(db.String(50))
     price = db.Column(db.Float, nullable=False)
+    old_price = db.Column(db.Float, nullable=True)
     brand = db.Column(db.String(50), nullable=False)
     description = db.Column(db.Text, nullable=True)
     units = db.Column(db.String(10), nullable=False)
     category = db.Column(db.String(50), nullable=False)
     units_in_stock = db.Column(db.Integer, nullable=False)
-    img_src = db.Column(db.String(255), nullable=True) 
+    img_src = db.Column(db.String(255), nullable=True)
+    is_featured = db.Column(db.Boolean, default=False)
+    date_added = db.Column(db.DateTime, default=datetime.now)
 
     def __repr__(self):
         return f'<Product {self.internal_sku}>'
