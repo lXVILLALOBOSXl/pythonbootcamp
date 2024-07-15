@@ -8,10 +8,29 @@
       <div class="col-11">
         <div class="row">
           <div class="col-12 col-md-6 mb-4">
-            <img src="{{ url_for('static', filename='img/' ~ product.img_src) }}" class="img-fluid" alt="{{ product.name }}">
+            <!-- Carousel for product images -->
+            <div id="productCarousel" class="carousel slide" data-bs-ride="carousel">
+              <div class="carousel-inner">
+                {% for image in images %}
+                <div class="carousel-item {% if loop.first %}active{% endif %}">
+                  <img src="{{ url_for('static', filename='img/' ~ image.img_src) }}" class="d-block w-100 product-img" alt="{{ product.name }}">
+                </div>
+                {% endfor %}
+              </div>
+              <button class="carousel-control-prev custom-carousel-control" type="button" data-bs-target="#productCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon custom-carousel-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+              </button>
+              <button class="carousel-control-next custom-carousel-control" type="button" data-bs-target="#productCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon custom-carousel-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+              </button>
+            </div>
           </div>
           <div class="col-12 col-md-6 d-flex flex-column">
             <h3>{{ product.name }}</h3>
+            <p><strong>Marca:</strong> {{ product.brand }}</p>
+            <p><strong>Categoría:</strong> {{ product.category }}</p>
             <p><strong>SKU Interno:</strong> {{ product.internal_sku }}</p>
             <p><strong>SKU de la Marca:</strong> {{ product.brand_sku }}</p>
             <p class="card-text">Stock: 
@@ -37,9 +56,9 @@
             <p><strong>Descripción:</strong> {{ product.description }}</p>
             <div class="mt-auto">
               {% if product.units_in_stock > 0 %}
-              <a href="{{ url_for('main.add_product', id=product.id) }}" class="btn btn-primary">Agregar al carrito</a>
+              <a href="{{ url_for('main.add', id=product.id) }}" class="btn btn-primary">Agregar al carrito</a>
               {% else %}
-              <a href="{{ url_for('main.notify_me', id=product.id) }}" class="btn btn-warning">Notificarme de nuevas existencias</a>
+              <a href="{{ url_for('main.notify', id=product.id) }}" class="btn btn-warning">Notificarme de nuevas existencias</a>
               {% endif %}
             </div>
           </div>
@@ -47,7 +66,6 @@
       </div>
     </div>
   </div>
-  
 
 {% endblock %}
 

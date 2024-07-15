@@ -30,17 +30,12 @@
       <div class="collapse navbar-collapse" id="navbarResponsive">
         <ul class="navbar-nav ms-auto py-4 py-lg-0">
           <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="#">Productos</a></li>
-        </ul>
-        <ul class="navbar-nav ms-auto py-4 py-lg-0">
           <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="#">Marcas</a></li>
         </ul>
         <form class="d-flex ms-auto navbar-form" action="{{ url_for('main.search') }}" method="GET">
           <input class="form-control me-2" type="search" placeholder="Buscar" aria-label="Search" name="query">
           <button class="btn btn-outline-success" type="submit"><i class="fas fa-search"></i></button>
         </form>
-        <a class="nav-link px-lg-3 py-3 py-lg-4" href="#">
-          <i class="fas fa-shopping-cart"></i>
-        </a>
         <div class="nav-item dropdown">
           <a class="nav-link px-lg-3 py-3 py-lg-4 dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             <i class="fas fa-user"></i>
@@ -54,9 +49,26 @@
             {% endif %}
           </ul>
         </div>
-        
       </div>
+      <a class="nav-link px-lg-3 py-3 py-lg-4" href="{{ url_for('main.cart') }}">
+        <i class="fas fa-shopping-cart"></i>
+        {% if session.get('cart') %}
+        <span class="badge bg-primary">{{ session.get('cart')|length }}</span>
+        {% endif %}
+      </a>
     </div>
   </nav>
+  <div class="container mt-2">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+  </div>
 </body>
 </html>

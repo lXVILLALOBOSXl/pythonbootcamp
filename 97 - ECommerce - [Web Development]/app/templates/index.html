@@ -30,194 +30,192 @@
   </div>
 </div>
     
-    <!-- Products Section -->
-    <div class="container-fluid mt-5 py-5 bg-light">
-      <div class="row justify-content-center">
-        <div class="col-11 text-center">
-          <h2 class="mb-3">Nuestros Productos</h2>
-          <p class="mb-4">Descubra nuestra amplia gama de productos para su laboratorio.</p>
-        </div>
+<!-- Products Section -->
+<div class="container-fluid mt-5 py-5 bg-light">
+  <div class="row justify-content-center">
+    <div class="col-11 text-center">
+      <h2 class="mb-3">Nuestros Productos</h2>
+      <p class="mb-4">Descubra nuestra amplia gama de productos para su laboratorio.</p>
+    </div>
+  </div>
+  <div class="row justify-content-center">
+    <div class="col-11">
+      <div class="arrow-container">
+        <span class="arrow" onclick="scrollContainerLeft('productsContainer')">&#9664;</span>
+        <span class="arrow" onclick="scrollContainerRight('productsContainer')">&#9654;</span>
       </div>
-      <div class="row justify-content-center">
-        <div class="col-11">
-          <div class="arrow-container">
-            <span class="arrow" onclick="scrollContainerLeft('productsContainer')">&#9664;</span>
-            <span class="arrow" onclick="scrollContainerRight('productsContainer')">&#9654;</span>
-          </div>
-          <div id="productsContainer" class="row flex-nowrap overflow-auto">
-            {% for product in products %}
-            <div class="col-12 col-md-4 mb-4">
-              <a href="{{ url_for('main.product', id=product.id) }}" class="card-link">
-                <div class="card shadow-sm d-flex flex-column">
-                  <img src="{{ url_for('static', filename='img/' ~ product.img_src) }}" class="card-img-top" alt="{{ product.name }}">
-                  <div class="card-body d-flex flex-column">
-                    <h5 class="card-title">{{ product.name }}</h5>
-                    <p class="card-text">{{ product.internal_sku }} - {{ product.brand_sku }}</p>
-                    <p class="card-text">Stock: 
-                      {% if product.units_in_stock > 0 %}
-                      <span class="text-success">{{ product.units_in_stock }} disponibles</span>
-                      <select class="form-select mt-2" aria-label="Cantidad de piezas">
-                        {% for i in range(1, product.units_in_stock + 1) %}
-                        <option value="{{ i }}">{{ i }}</option>
-                        {% endfor %}
-                      </select>
-                      {% else %}
-                      <span class="text-danger">Agotado</span>
-                      {% endif %}
-                    </p>
-                    <p class="card-text"><strong>Precio:
-                      {% if product.old_price %}
-                        <span class="text-danger"><s>MX${{ product.old_price }}</s></span>
-                        <span class="text-success">MX${{ product.price }}</span>
-                      {% else %}
-                        <span>MX${{ product.price }}</span>
-                      {% endif %}
-                    </strong></p>
-                    <p></p>
-                    <div class="mt-auto">
-                      {% if product.units_in_stock > 0 %}
-                      <a href="{{ url_for('main.add', id=product.id) }}" class="btn btn-primary">Agregar al carrito</a>
-                      {% else %}
-                      <a href="{{ url_for('main.notify', id=product.id) }}" class="btn btn-warning">Estoy Interesado</a>
-                      {% endif %}
-                    </div>
-                  </div>
+      <div id="productsContainer" class="row flex-nowrap overflow-auto">
+        {% for product in products %}
+        <div class="col-12 col-md-4 mb-4">
+          <a href="{{ url_for('main.product', id=product.id) }}" class="card-link">
+            <div class="card shadow-sm d-flex flex-column">
+              <img src="{{ url_for('static', filename='img/' ~ product.img_src) }}" class="card-img-top" alt="{{ product.name }}">
+              <div class="card-body d-flex flex-column">
+                <h5 class="card-title">{{ product.name }}</h5>
+                <p class="card-text">{{ product.internal_sku }} - {{ product.brand_sku }}</p>
+                <p class="card-text">Stock: 
+                  {% if product.units_in_stock > 0 %}
+                  <span class="text-success">{{ product.units_in_stock }} disponibles</span>
+                  <select class="form-select mt-2" aria-label="Cantidad de piezas">
+                    {% for i in range(1, product.units_in_stock + 1) %}
+                    <option value="{{ i }}">{{ i }}</option>
+                    {% endfor %}
+                  </select>
+                  {% else %}
+                  <span class="text-danger">Agotado</span>
+                  {% endif %}
+                </p>
+                <p class="card-text"><strong>Precio:
+                  {% if product.old_price %}
+                    <span class="text-danger"><s>MX${{ product.old_price }}</s></span>
+                    <span class="text-success">MX${{ product.price }}</span>
+                  {% else %}
+                    <span>MX${{ product.price }}</span>
+                  {% endif %}
+                </strong></p>
+                <p></p>
+                <div class="mt-auto">
+                  {% if product.units_in_stock > 0 %}
+                  <form action="{{ url_for('main.add', id=product.id) }}" method="post">
+                    <button type="submit" class="btn btn-primary">Agregar al carrito</button>
+                  </form>
+                  {% else %}
+                  <a href="{{ url_for('main.notify', id=product.id) }}" class="btn btn-warning">Estoy Interesado</a>
+                  {% endif %}
                 </div>
-              </a>
+              </div>
             </div>
-            {% endfor %}
-          </div>
+          </a>
         </div>
+        {% endfor %}
       </div>
     </div>
-    
-    
-    
-    <!-- Offers Section -->
-    <div class="container-fluid mt-5 py-5 bg-secondary text-white">
-      <div class="row justify-content-center">
-        <div class="col-11 text-center">
-          <h2 class="mb-3">Ofertas</h2>
-        </div>
+  </div>
+</div>
+
+<!-- Offers Section -->
+<div class="container-fluid mt-5 py-5 bg-secondary text-white">
+  <div class="row justify-content-center">
+    <div class="col-11 text-center">
+      <h2 class="mb-3">Ofertas</h2>
+    </div>
+  </div>
+  <div class="row justify-content-center">
+    <div class="col-11">
+      <div class="arrow-container">
+        <span class="arrow" onclick="scrollContainerLeft('offersContainer')">&#9664;</span>
+        <span class="arrow" onclick="scrollContainerRight('offersContainer')">&#9654;</span>
       </div>
-      <div class="row justify-content-center">
-        <div class="col-11">
-          <div class="arrow-container">
-            <span class="arrow" onclick="scrollContainerLeft('offersContainer')">&#9664;</span>
-            <span class="arrow" onclick="scrollContainerRight('offersContainer')">&#9654;</span>
-          </div>
-          <div id="offersContainer" class="row flex-nowrap overflow-auto">
-            {% for product in offers %}
-            <div class="col-12 col-md-4 mb-4">
-              <a href="{{ url_for('main.product', id=product.id) }}" class="card-link">
-                <div class="card shadow-sm d-flex flex-column">
-                  <img src="{{ url_for('static', filename='img/' ~ product.img_src) }}" class="card-img-top" alt="{{ product.name }}">
-                  <div class="card-body d-flex flex-column">
-                    <h5 class="card-title">{{ product.name }}</h5>
-                    <p class="card-text">{{ product.internal_sku }} - {{ product.brand_sku }}</p>
-                    <p class="card-text">Stock: 
-                      {% if product.units_in_stock > 0 %}
-                      <span class="text-success">{{ product.units_in_stock }} disponibles</span>
-                      <select class="form-select mt-2" aria-label="Cantidad de piezas">
-                        {% for i in range(1, product.units_in_stock + 1) %}
-                        <option value="{{ i }}">{{ i }}</option>
-                        {% endfor %}
-                      </select>
-                      {% else %}
-                      <span class="text-danger">Agotado</span>
-                      {% endif %}
-                    </p>
-                    <p class="card-text"><strong>Precio:
-                      {% if product.old_price %}
-                        <span class="text-danger"><s>MX${{ product.old_price }}</s></span>
-                        <span class="text-success">MX${{ product.price }}</span>
-                      {% else %}
-                        <span>MX${{ product.price }}</span>
-                      {% endif %}
-                    </strong></p>  
-                    <p></p>             
-                    <div class="mt-auto">
-                      {% if product.units_in_stock > 0 %}
-                      <a href="{{ url_for('main.add', id=product.id) }}" class="btn btn-primary">Agregar al carrito</a>
-                      {% else %}
-                      <a href="{{ url_for('main.notify', id=product.id) }}" class="btn btn-warning">Estoy interesado</a>
-                      {% endif %}
-                    </div>
-                  </div>
+      <div id="offersContainer" class="row flex-nowrap overflow-auto">
+        {% for product in offers %}
+        <div class="col-12 col-md-4 mb-4">
+          <a href="{{ url_for('main.product', id=product.id) }}" class="card-link">
+            <div class="card shadow-sm d-flex flex-column">
+              <img src="{{ url_for('static', filename='img/' ~ product.img_src) }}" class="card-img-top" alt="{{ product.name }}">
+              <div class="card-body d-flex flex-column">
+                <h5 class="card-title">{{ product.name }}</h5>
+                <p class="card-text">{{ product.internal_sku }} - {{ product.brand_sku }}</p>
+                <p class="card-text">Stock: 
+                  {% if product.units_in_stock > 0 %}
+                  <span class="text-success">{{ product.units_in_stock }} disponibles</span>
+                  <select class="form-select mt-2" aria-label="Cantidad de piezas">
+                    {% for i in range(1, product.units_in_stock + 1) %}
+                    <option value="{{ i }}">{{ i }}</option>
+                    {% endfor %}
+                  </select>
+                  {% else %}
+                  <span class="text-danger">Agotado</span>
+                  {% endif %}
+                </p>
+                <p class="card-text"><strong>Precio:
+                  {% if product.old_price %}
+                    <span class="text-danger"><s>MX${{ product.old_price }}</s></span>
+                    <span class="text-success">MX${{ product.price }}</span>
+                  {% else %}
+                    <span>MX${{ product.price }}</span>
+                  {% endif %}
+                </strong></p>  
+                <p></p>             
+                <div class="mt-auto">
+                  {% if product.units_in_stock > 0 %}
+                  <form action="{{ url_for('main.add', id=product.id) }}" method="post">
+                    <button type="submit" class="btn btn-primary">Agregar al carrito</button>
+                  </form>
+                  {% else %}
+                  <a href="{{ url_for('main.notify', id=product.id) }}" class="btn btn-warning">Estoy interesado</a>
+                  {% endif %}
                 </div>
-              </a>
+              </div>
             </div>
-            {% endfor %}
-          </div>
+          </a>
         </div>
+        {% endfor %}
       </div>
     </div>
-    
-    
-    
-    <!-- New Products Section -->
-    <div class="container-fluid mt-5 py-5 bg-light">
-      <div class="row justify-content-center">
-        <div class="col-11 text-center">
-          <h2 class="mb-3">Nuevos Productos</h2>
-        </div>
+  </div>
+</div>
+
+<!-- New Products Section -->
+<div class="container-fluid mt-5 py-5 bg-light">
+  <div class="row justify-content-center">
+    <div class="col-11 text-center">
+      <h2 class="mb-3">Nuevos Productos</h2>
+    </div>
+  </div>
+  <div class="row justify-content-center">
+    <div class="col-11">
+      <div class="arrow-container">
+        <span class="arrow" onclick="scrollContainerLeft('newProductsContainer')">&#9664;</span>
+        <span class="arrow" onclick="scrollContainerRight('newProductsContainer')">&#9654;</span>
       </div>
-      <div class="row justify-content-center">
-        <div class="col-11">
-          <div class="arrow-container">
-            <span class="arrow" onclick="scrollContainerLeft('newProductsContainer')">&#9664;</span>
-            <span class="arrow" onclick="scrollContainerRight('newProductsContainer')">&#9654;</span>
-          </div>
-          <div id="newProductsContainer" class="row flex-nowrap overflow-auto">
-            {% for product in new_products %}
-            <div class="col-12 col-md-4 mb-4">
-              <a href="{{ url_for('main.product', id=product.id) }}" class="card-link">
-                <div class="card shadow-sm d-flex flex-column">
-                  <img src="{{ url_for('static', filename='img/' ~ product.img_src) }}" class="card-img-top" alt="{{ product.name }}">
-                  <div class="card-body d-flex flex-column">
-                    <h5 class="card-title">{{ product.name }}</h5>
-                    <p class="card-text">{{ product.internal_sku }} - {{ product.brand_sku }}</p>
-                    <p class="card-text">Stock: 
-                      {% if product.units_in_stock > 0 %}
-                      <span class="text-success">{{ product.units_in_stock }} disponibles</span>
-                      <select class="form-select mt-2" aria-label="Cantidad de piezas">
-                        {% for i in range(1, product.units_in_stock + 1) %}
-                        <option value="{{ i }}">{{ i }}</option>
-                        {% endfor %}
-                      </select>
-                      {% else %}
-                      <span class="text-danger">Agotado</span>
-                      {% endif %}
-                    </p>
-                    <p class="card-text"><strong>Precio:
-                      {% if product.old_price %}
-                        <span class="text-danger"><s>MX${{ product.old_price }}</s></span>
-                        <span class="text-success">MX${{ product.price }}</span>
-                      {% else %}
-                        <span>MX${{ product.price }}</span>
-                      {% endif %}
-                    </strong></p> 
-                    <p></p>
-                    <div class="mt-auto">
-                      {% if product.units_in_stock > 0 %}
-                      <a href="#" class="btn btn-primary">Agregar al carrito</a>
-                      {% else %}
-                      <a href="#" class="btn btn-warning">Estoy interesado</a>
-                      {% endif %}
-                    </div>
-                  </div>
+      <div id="newProductsContainer" class="row flex-nowrap overflow-auto">
+        {% for product in new_products %}
+        <div class="col-12 col-md-4 mb-4">
+          <a href="{{ url_for('main.product', id=product.id) }}" class="card-link">
+            <div class="card shadow-sm d-flex flex-column">
+              <img src="{{ url_for('static', filename='img/' ~ product.img_src) }}" class="card-img-top" alt="{{ product.name }}">
+              <div class="card-body d-flex flex-column">
+                <h5 class="card-title">{{ product.name }}</h5>
+                <p class="card-text">{{ product.internal_sku }} - {{ product.brand_sku }}</p>
+                <p class="card-text">Stock: 
+                  {% if product.units_in_stock > 0 %}
+                  <span class="text-success">{{ product.units_in_stock }} disponibles</span>
+                  <select class="form-select mt-2" aria-label="Cantidad de piezas">
+                    {% for i in range(1, product.units_in_stock + 1) %}
+                    <option value="{{ i }}">{{ i }}</option>
+                    {% endfor %}
+                  </select>
+                  {% else %}
+                  <span class="text-danger">Agotado</span>
+                  {% endif %}
+                </p>
+                <p class="card-text"><strong>Precio:
+                  {% if product.old_price %}
+                    <span class="text-danger"><s>MX${{ product.old_price }}</s></span>
+                    <span class="text-success">MX${{ product.price }}</s>
+                  {% else %}
+                    <span>MX${{ product.price }}</span>
+                  {% endif %}
+                </strong></p> 
+                <p></p>
+                <div class="mt-auto">
+                  {% if product.units_in_stock > 0 %}
+                  <form action="{{ url_for('main.add', id=product.id) }}" method="post">
+                    <button type="submit" class="btn btn-primary">Agregar al carrito</button>
+                  </form>
+                  {% else %}
+                  <a href="{{ url_for('main.notify', id=product.id) }}" class="btn btn-warning">Estoy interesado</a>
+                  {% endif %}
                 </div>
-              </a>
+              </div>
             </div>
-            {% endfor %}
-          </div>
+          </a>
         </div>
+        {% endfor %}
       </div>
     </div>
-    
-    
-    
-    
+  </div>
+</div>
 
 {% endblock %}
 
