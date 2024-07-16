@@ -16,7 +16,6 @@
   <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet" />
   <!-- Core theme CSS (includes Bootstrap)-->
   <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet" />
-  
   {% endblock %}
 </head>
 <body>
@@ -41,10 +40,11 @@
             <i class="fas fa-user"></i>
           </a>
           <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-            {% if not logged_in %}
-              <li><a class="dropdown-item" href="{{ url_for('main.register') }}">Registro</a></li>
-              <li><a class="dropdown-item" href="{{ url_for('main.login') }}">Login</a></li>
+            {% if not current_user.is_authenticated %}
+            <li><a class="dropdown-item" href="{{ url_for('main.login') }}">Login</a></li>
+            <li><a class="dropdown-item" href="{{ url_for('main.register') }}">Registro</a></li>  
             {% else %}
+              <li><a class="dropdown-item" href="{{ url_for('main.account') }}">Mi cuenta</a></li>
               <li><a class="dropdown-item" href="{{ url_for('main.logout') }}">Salir</a></li>
             {% endif %}
           </ul>

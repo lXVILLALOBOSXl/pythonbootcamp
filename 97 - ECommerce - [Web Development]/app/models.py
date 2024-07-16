@@ -1,6 +1,7 @@
 from datetime import datetime
 from sqlalchemy import text
-from . import db
+from . import db, login_manager
+from flask_login import UserMixin
 
 class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -31,7 +32,7 @@ class ProductImage(db.Model):
         return f'<ProductImage {self.img_src}>'
     
 
-class Client(db.Model):
+class Client(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
@@ -42,6 +43,10 @@ class Client(db.Model):
 
     def __repr__(self):
         return f'<Client {self.name}>'
+
+@login_manager.user_loader
+def load_user(user_id):
+    return Client.query.get(int(user_id))
 
 class ShippingAddress(db.Model):
     id = db.Column(db.Integer, primary_key=True)
