@@ -4,7 +4,7 @@ from .forms import *
 from flask_login import login_user, current_user, logout_user, login_required
 from werkzeug.security import check_password_hash, generate_password_hash
 from . import db
-from .utils import send_confirmation_email, send_reset_email, confirm_token
+from .utils import send_confirmation_email, send_reset_email, confirm_token, send_guest_confirmation_email
 
 main = Blueprint('main', __name__)
 
@@ -45,26 +45,70 @@ def login():
         elif not check_password_hash(user.password_hash, password):
             flash('Correo o contraseña incorrecta, por favor intenta de nuevo.', 'error')
             return redirect(url_for('main.login'))
+        elif not user.is_verified:
+            send_confirmation_email(user.email)
+            flash('Tu cuenta no está verificada. Se ha enviado un correo electrónico de verificación. Por favor, verifica tu correo electrónico para iniciar sesión.', 'warning')
+            return redirect(url_for('main.login'))
         else:
             login_user(user)
             return redirect(url_for('main.index'))  # Redirect to the desired page after login
     return render_template("login.html", logged_in=current_user.is_authenticated, form=form)
 
+
+@main.route('/confirm_order/<token>')
+def confirm_order_email(token):
+    try:
+        email = confirm_token(token)
+    except:
+        flash('The confirmation link is invalid or has expired.', 'danger')
+        return redirect(url_for('main.index'))
+
+    order = Order.query.filter_by(email=email).first_or_404()
+    if order.is_confirmed:
+        flash('Order already confirmed.', 'success')
+    else:
+        order.is_confirmed = True
+        db.session.add(order)
+        db.session.commit()
+        flash('Your order has been confirmed. Thanks!', 'success')
+    return redirect(url_for('main.index'))
+
+
 @main.route('/account')
 @login_required
 def account():
-    pass
+    user = current_user
+    shipping_addresses = ShippingAddress.query.filter_by(client_id=user.id).all()
+    payment_addresses = PaymentAddress.query.filter_by(client_id=user.id).all()
+    orders = Order.query.filter_by(client_id=user.id).all()
+    return render_template('account.html', user=user, shipping_addresses=shipping_addresses, payment_addresses=payment_addresses, orders=orders)
+
 
 @main.route('/logout')
 def logout():
     logout_user()
     return redirect(url_for('main.index'))
 
-@main.route('/checkout')
+@main.route('/checkout', methods=['GET', 'POST'])
+@login_required
 def checkout():
-    if current_user.is_authenticated:
-        return redirect(url_for('main.index')) 
-    return render_template('checkout.html')
+    if not current_user.is_verified:
+        send_confirmation_email(current_user.email)
+        flash('Tu cuenta no está verificada. Se ha enviado un correo electrónico de verificación. Por favor, verifica tu correo electrónico para proceder con la compra.', 'warning')
+        return redirect(url_for('main.cart'))
+    
+    form = CheckoutForm()
+    if form.validate_on_submit():
+        # Handle form submission, save addresses, and create order here
+        # ...
+
+        flash('Compra completada con éxito.', 'success')
+        return redirect(url_for('main.index'))
+    
+    return render_template('checkout_form.html', form=form)
+
+
+
 
 @main.route('/register', methods=['GET', 'POST'])
 def register():
@@ -88,11 +132,15 @@ def register():
             email=form.email.data,
             password_hash=hash_and_salted_password,
             name=form.name.data,
+            is_verified=False
         )
         db.session.add(new_user)
         db.session.commit()
-        login_user(new_user)
-        return redirect(url_for('main.index'))  # Redirect to the desired page after registration
+
+        send_confirmation_email(new_user.email)
+
+        flash('Se ha enviado un correo electrónico de confirmación por email.', 'success')
+        return redirect(url_for('main.login'))
     
     return render_template('register.html', logged_in=current_user.is_authenticated, form=form)
 
@@ -101,17 +149,17 @@ def confirm_email(token):
     try:
         email = confirm_token(token)
     except:
-        flash('The confirmation link is invalid or has expired.', 'danger')
+        flash('El enlace de confirmación no es válido o ha caducado.', 'danger')
         return redirect(url_for('main.login'))
 
     user = Client.query.filter_by(email=email).first_or_404()
-    if user.is_active:
-        flash('Account already confirmed. Please login.', 'success')
+    if user.is_verified:
+        flash('Cuenta ya confirmada. Por favor Iniciar sesión.', 'success')
     else:
-        user.is_active = True
+        user.is_verified = True
         db.session.add(user)
         db.session.commit()
-        flash('You have confirmed your account. Thanks!', 'success')
+        flash('Has confirmado tu cuenta. ¡Gracias!', 'success')
     return redirect(url_for('main.login'))
 
 @main.route('/reset', methods=['GET', 'POST'])
@@ -134,7 +182,7 @@ def reset_with_token(token):
     try:
         email = confirm_token(token)
     except:
-        flash('The reset link is invalid or has expired.', 'danger')
+        flash('El enlace de reinicio no es válido o ha caducado.', 'danger')
         return redirect(url_for('main.reset_request'))
     form = ResetPasswordForm()
     if form.validate_on_submit():
@@ -142,9 +190,10 @@ def reset_with_token(token):
         user.password_hash = generate_password_hash(form.password.data, method='pbkdf2:sha256', salt_length=8)
         db.session.add(user)
         db.session.commit()
-        flash('Your password has been updated!', 'success')
+        flash('¡Tu contraseña ha sido actualizada!', 'success')
         return redirect(url_for('main.login'))
-    return render_template('reset_token.html', form=form)
+    return render_template('reset_token.html', form=form, token=token)
+
 
 @main.route('/product/<int:id>')
 def product(id):
@@ -208,9 +257,7 @@ def cart():
     total = sum(item['price'] * item['quantity'] for item in cart)
     return render_template('cart.html', cart=cart, total=total)
 
-@main.route('/guest-checkout')
-def guest_checkout():
-    return render_template('guest_checkout.html')
+
 
 
 

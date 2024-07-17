@@ -118,4 +118,8 @@ background-color: #0056b3;
   }
 
   
-  
+  .card-title .brand-sku {
+    font-weight: normal; /* This will make the text not bold */
+    font-size: 0.9em; /* You can adjust the size if needed */
+    color: #666; /* Adjust the color if you want it to be different */
+}

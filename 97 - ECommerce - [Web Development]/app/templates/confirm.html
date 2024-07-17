@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Confirm Your Email</title>
+    <title>Confirma tu correo electrónico</title>
 </head>
 <body>
-    <p>Hi,</p>
-    <p>Thanks for signing up! Please follow this link to activate your account:</p>
-    <p><a href="{{ url_for('main.confirm_email', token=token, _external=True) }}">Confirm your email address</a></p>
-    <p>If you did not sign up, please ignore this email.</p>
+    <p>Hola,</p>
+    <p>¡Gracias por registrarte! Por favor, sigue este enlace para activar tu cuenta:</p>
+    <p><a href="{{ confirm_url }}">Confirma tu dirección de correo electrónico</a></p>
+    <p>Si no te registraste, por favor ignora este correo.</p>
 </body>
 </html>

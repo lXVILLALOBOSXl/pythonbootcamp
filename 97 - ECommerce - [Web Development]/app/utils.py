@@ -28,14 +28,20 @@ def send_email(to, subject, template):
     )
     mail.send(msg)
 
-def send_confirmation_email(user_email):
-    token = generate_confirmation_token(user_email)
-    confirm_url = url_for('main.confirm_email', token=token, _external=True)
-    html = render_template('confirm.html', confirm_url=confirm_url)
-    send_email(user_email, 'Confirm Your Email', html)
-
 def send_reset_email(user_email):
     token = generate_confirmation_token(user_email)
     reset_url = url_for('main.reset_with_token', token=token, _external=True)
     html = render_template('reset_password_email.html', reset_url=reset_url)
     send_email(user_email, 'Restablecer tu Contraseña', html)
+
+def send_confirmation_email(user_email):
+    token = generate_confirmation_token(user_email)
+    confirm_url = url_for('main.confirm_email', token=token, _external=True)
+    html = render_template('confirm.html', confirm_url=confirm_url)
+    send_email(user_email, 'Confirme su email', html)
+
+def send_guest_confirmation_email(order):
+    token = generate_confirmation_token(order.email)
+    confirm_url = url_for('main.confirm_order_email', token=token, _external=True)
+    html = render_template('confirm_order.html', confirm_url=confirm_url, order=order)
+    send_email(order.email, 'Confirm Your Order', html)

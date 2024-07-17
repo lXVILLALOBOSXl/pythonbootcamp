@@ -1,0 +1,172 @@
+{% include "header.html" %}
+
+{% block content %}
+<div class="container mt-5">
+  <h2 class="mt-3">Proceso de Pago</h2>
+  <form method="POST" action="{{ url_for('main.checkout') }}">
+    {{ form.hidden_tag() }}
+    
+    <h4>Dirección de Envío</h4>
+    <div class="form-group">
+      {{ form.shipping_nombre.label(class="form-label") }}
+      {{ form.shipping_nombre(class="form-control") }}
+    </div>
+    <div class="form-group mt-3">
+      {{ form.shipping_apellidos.label(class="form-label") }}
+      {{ form.shipping_apellidos(class="form-control") }}
+    </div>
+    <div class="form-group mt-3">
+      {{ form.shipping_celular.label(class="form-label") }}
+      {{ form.shipping_celular(class="form-control") }}
+    </div>
+    <div class="form-group mt-3">
+      {{ form.shipping_empresa.label(class="form-label") }}
+      {{ form.shipping_empresa(class="form-control") }}
+    </div>
+    <div class="form-group mt-3">
+      {{ form.shipping_calle.label(class="form-label") }}
+      {{ form.shipping_calle(class="form-control") }}
+    </div>
+    <div class="form-group mt-3">
+      {{ form.shipping_numero.label(class="form-label") }}
+      {{ form.shipping_numero(class="form-control") }}
+    </div>
+    <div class="form-group mt-3">
+      {{ form.shipping_num_int.label(class="form-label") }}
+      {{ form.shipping_num_int(class="form-control") }}
+    </div>
+    <div class="form-group mt-3">
+      {{ form.shipping_referencias.label(class="form-label") }}
+      {{ form.shipping_referencias(class="form-control") }}
+    </div>
+    <div class="form-group mt-3">
+      {{ form.shipping_colonia.label(class="form-label") }}
+      {{ form.shipping_colonia(class="form-control") }}
+    </div>
+    <div class="form-group mt-3">
+      {{ form.shipping_cp.label(class="form-label") }}
+      {{ form.shipping_cp(class="form-control") }}
+    </div>
+    <div class="form-group mt-3">
+      {{ form.shipping_ciudad.label(class="form-label") }}
+      {{ form.shipping_ciudad(class="form-control") }}
+    </div>
+    <div class="form-group mt-3">
+      {{ form.shipping_estado.label(class="form-label") }}
+      {{ form.shipping_estado(class="form-control") }}
+    </div>
+    
+    <h4 class="mt-4">Dirección de Facturación</h4>
+    <div class="form-group mt-3">
+      {{ form.same_address(class="form-check-input") }}
+      {{ form.same_address.label(class="form-check-label") }}
+    </div>
+
+    <div id="payment-address-fields">
+      <div class="form-group mt-3">
+        {{ form.payment_nombre.label(class="form-label") }}
+        {{ form.payment_nombre(class="form-control") }}
+      </div>
+      <div class="form-group mt-3">
+        {{ form.payment_apellidos.label(class="form-label") }}
+        {{ form.payment_apellidos(class="form-control") }}
+      </div>
+      <div class="form-group mt-3">
+        {{ form.payment_calle.label(class="form-label") }}
+        {{ form.payment_calle(class="form-control") }}
+      </div>
+      <div class="form-group mt-3">
+        {{ form.payment_numero.label(class="form-label") }}
+        {{ form.payment_numero(class="form-control") }}
+      </div>
+      <div class="form-group mt-3">
+        {{ form.payment_num_int.label(class="form-label") }}
+        {{ form.payment_num_int(class="form-control") }}
+      </div>
+      <div class="form-group mt-3">
+        {{ form.payment_referencias.label(class="form-label") }}
+        {{ form.payment_referencias(class="form-control") }}
+      </div>
+      <div class="form-group mt-3">
+        {{ form.payment_colonia.label(class="form-label") }}
+        {{ form.payment_colonia(class="form-control") }}
+      </div>
+      <div class="form-group mt-3">
+        {{ form.payment_cp.label(class="form-label") }}
+        {{ form.payment_cp(class="form-control") }}
+      </div>
+      <div class="form-group mt-3">
+        {{ form.payment_ciudad.label(class="form-label") }}
+        {{ form.payment_ciudad(class="form-control") }}
+      </div>
+      <div class="form-group mt-3">
+        {{ form.payment_estado.label(class="form-label") }}
+        {{ form.payment_estado(class="form-control") }}
+      </div>
+    </div>
+
+    <h4 class="mt-4">Factura</h4>
+    <div class="form-group mt-3">
+      {{ form.need_invoice(class="form-check-input") }}
+      {{ form.need_invoice.label(class="form-check-label") }}
+    </div>
+
+    <div id="invoice-fields">
+      <div class="form-group mt-3">
+        {{ form.payment_rfc.label(class="form-label") }}
+        {{ form.payment_rfc(class="form-control") }}
+      </div>
+      <div class="form-group mt-3">
+        {{ form.payment_razon_social.label(class="form-label") }}
+        {{ form.payment_razon_social(class="form-control") }}
+      </div>
+      <div class="form-group mt-3">
+        {{ form.payment_regimen_fiscal.label(class="form-label") }}
+        {{ form.payment_regimen_fiscal(class="form-control") }}
+      </div>
+      <div class="form-group mt-3">
+        {{ form.uso_cfdi.label(class="form-label") }}
+        {{ form.uso_cfdi(class="form-control") }}
+      </div>
+    </div>
+
+    <div class="form-group mt-4">
+      {{ form.submit(class="btn btn-primary") }}
+    </div>
+  </form>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const sameAddressCheckbox = document.querySelector('#same_address');
+    const paymentAddressFields = document.querySelector('#payment-address-fields');
+    const needInvoiceCheckbox = document.querySelector('#need_invoice');
+    const invoiceFields = document.querySelector('#invoice-fields');
+
+    function togglePaymentAddressFields() {
+      if (sameAddressCheckbox.checked) {
+        paymentAddressFields.style.display = 'none';
+      } else {
+        paymentAddressFields.style.display = 'block';
+      }
+    }
+
+    function toggleInvoiceFields() {
+      if (needInvoiceCheckbox.checked) {
+        invoiceFields.style.display = 'block';
+      } else {
+        invoiceFields.style.display = 'none';
+      }
+    }
+
+    sameAddressCheckbox.addEventListener('change', togglePaymentAddressFields);
+    needInvoiceCheckbox.addEventListener('change', toggleInvoiceFields);
+
+    togglePaymentAddressFields();
+    toggleInvoiceFields();
+  });
+</script>
+
+{% endblock %}
+
+{% include "footer.html" %}
