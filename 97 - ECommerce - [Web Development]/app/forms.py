@@ -29,9 +29,6 @@ class ResetPasswordForm(FlaskForm):
     confirm_password = PasswordField('Confirmar Nueva Contraseña', validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Restablecer Contraseña', render_kw={"class": "btn btn-primary btn-block"})
 
-from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, SelectField, BooleanField
-from wtforms.validators import DataRequired, Length, Optional, ValidationError
 
 class CheckoutForm(FlaskForm):
     # Shipping Address
@@ -81,6 +78,7 @@ class CheckoutForm(FlaskForm):
                                      ('YUC', 'Yucatán'),
                                      ('ZAC', 'Zacatecas')
                                  ])
+    save_shipping = BooleanField('Guardar para futuras compras')
 
     # Payment Address
     same_address = BooleanField('La dirección de facturación coincide con la dirección de envío')
@@ -128,6 +126,7 @@ class CheckoutForm(FlaskForm):
                                      ('YUC', 'Yucatán'),
                                      ('ZAC', 'Zacatecas')
                                  ])
+    save_payment = BooleanField('Guardar para futuras compras')
 
     # Invoice
     need_invoice = BooleanField('Necesito Factura')
@@ -135,21 +134,23 @@ class CheckoutForm(FlaskForm):
     payment_razon_social = StringField('Razón Social o nombre *', validators=[Optional(), Length(max=100)], default="")
     payment_regimen_fiscal = SelectField('Régimen Fiscal *', validators=[Optional()], choices=[('R1', 'Régimen 1'), ('R2', 'Régimen 2')], default="")
     uso_cfdi = SelectField('Uso CFDI *',validators=[Optional()], choices=[('U1', 'Uso 1'), ('U2', 'Uso 2')], default="")
+    save_billing = BooleanField('Guardar para futuras compras')
 
     submit = SubmitField('Completar Compra')
 
-    def validate(self):
-        if not super(CheckoutForm, self).validate():
+    def validate(self, **kwargs):
+        rv = super().validate(**kwargs)
+        if not rv:
             return False
-        
+
         if self.need_invoice.data:
             if not self.payment_rfc.data or not self.payment_razon_social.data or not self.payment_regimen_fiscal.data or not self.uso_cfdi.data:
-                self.need_invoice.errors.append("All invoice fields are required if 'Necesito Factura' is checked.")
                 return False
         
         if not self.same_address.data:
             if not self.payment_nombre.data or not self.payment_apellidos.data or not self.payment_calle.data or not self.payment_numero.data or not self.payment_colonia.data or not self.payment_cp.data or not self.payment_ciudad.data or not self.payment_estado.data:
-                self.same_address.errors.append("All payment address fields are required if 'La dirección de facturación coincide con la dirección de envío' is unchecked.")
                 return False
 
         return True
+
+

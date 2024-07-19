@@ -46,10 +46,11 @@
   </div>
   <div class="d-flex justify-content-between align-items-center mt-4">
     <h3>Total: MX${{ "%.2f"|format(total) }}</h3>
-    <a href="{{ url_for('main.checkout') }}" class="btn btn-success">Ir a Pagar</a>
+    {% if cart|length > 0 %}
+      <a href="{{ url_for('main.checkout') }}" class="btn btn-success">Ir a Pagar</a>
+    {% endif %}
   </div>
 </div>
 {% endblock %}
 
 {% include "footer.html" %}
-

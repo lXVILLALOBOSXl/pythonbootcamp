@@ -39,7 +39,10 @@ class Client(db.Model, UserMixin):
     is_verified = db.Column(db.Boolean, default=False, server_default='0')
     shipping_addresses = db.relationship('ShippingAddress', backref='client', lazy=True)
     payment_addresses = db.relationship('PaymentAddress', backref='client', lazy=True)
+    billing = db.relationship('Billing', backref='client', lazy=True)
     orders = db.relationship('Order', backref='client', lazy=True)
+    reset_token = db.Column(db.String(120), nullable=True)
+    reset_token_expiration = db.Column(db.DateTime, nullable=True)
 
     def __repr__(self):
         return f'<Client {self.name}>'
@@ -47,6 +50,17 @@ class Client(db.Model, UserMixin):
 @login_manager.user_loader
 def load_user(user_id):
     return Client.query.get(int(user_id))
+
+class Billing(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    client_id = db.Column(db.Integer, db.ForeignKey('client.id'), nullable=False)
+    rfc = db.Column(db.String(13), nullable=False)
+    razon_social = db.Column(db.String(100), nullable=False)
+    regimen_fiscal = db.Column(db.String(100), nullable=False)
+    uso_cfdi = db.Column(db.String(100), nullable=False)
+
+    def __repr__(self):
+        return f'<Billing {self.rfc}>'
 
 class ShippingAddress(db.Model):
     id = db.Column(db.Integer, primary_key=True)

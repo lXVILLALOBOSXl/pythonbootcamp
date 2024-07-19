@@ -7,17 +7,18 @@
     <div class="col-md-4 col-sm-12 mb-4">
       <h4>Iniciar sesión</h4>
       <p>Si ya tienes una cuenta, inicia sesión para completar tu compra.</p>
-      <a href="{{ url_for('main.login') }}" class="btn btn-primary">Iniciar sesión</a>
+      <a href="{{ url_for('main.login', next=next) }}" class="btn btn-primary">Iniciar sesión</a>
     </div>
     <div class="col-md-4 col-sm-12 mb-4">
       <h4>Crear una cuenta</h4>
       <p>Crea una cuenta para disfrutar de beneficios adicionales y un historial de compras.</p>
-      <a href="{{ url_for('main.register') }}" class="btn btn-success">Crear una cuenta</a>
+      <a href="{{ url_for('main.register', next=next) }}" class="btn btn-success">Crear una cuenta</a>
     </div>
   </div>
 </div>
 {% endblock %}
 
 {% include "footer.html" %}
+
 
 

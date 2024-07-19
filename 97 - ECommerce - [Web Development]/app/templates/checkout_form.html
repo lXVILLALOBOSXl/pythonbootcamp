@@ -3,6 +3,41 @@
 {% block content %}
 <div class="container mt-5">
   <h2 class="mt-3">Proceso de Pago</h2>
+
+  <!-- Cart Summary -->
+  <div class="cart-summary mb-4">
+    <h4>Resumen del Carrito</h4>
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Producto</th>
+            <th>Precio</th>
+            <th>Cantidad</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in cart %}
+          <tr>
+            <td>{{ item.name }}</td>
+            <td>
+              {% if item.old_price %}
+              <span style="text-decoration: line-through;">MX${{ "%.2f"|format(item.old_price) }}</span>
+              {% endif %}
+              MX${{ "%.2f"|format(item.price) }}
+            </td>
+            <td>{{ item.quantity }}</td>
+            <td>MX${{ "%.2f"|format(item.price * item.quantity) }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <h4 class="mt-3">Total: MX${{ "%.2f"|format(total) }}</h4>
+    </div>
+  </div>
+  <!-- End Cart Summary -->
+
   <form method="POST" action="{{ url_for('main.checkout') }}">
     {{ form.hidden_tag() }}
     
@@ -56,6 +91,13 @@
       {{ form.shipping_estado(class="form-control") }}
     </div>
     
+    {% if shipping_count < 5 %}
+    <div class="form-group mt-3">
+      {{ form.save_shipping(class="form-check-input") }}
+      {{ form.save_shipping.label(class="form-check-label") }}
+    </div>
+    {% endif %}
+
     <h4 class="mt-4">Dirección de Facturación</h4>
     <div class="form-group mt-3">
       {{ form.same_address(class="form-check-input") }}
@@ -104,6 +146,13 @@
         {{ form.payment_estado(class="form-control") }}
       </div>
     </div>
+    
+    {% if payment_count < 5 %}
+    <div class="form-group mt-3">
+      {{ form.save_payment(class="form-check-input") }}
+      {{ form.save_payment.label(class="form-check-label") }}
+    </div>
+    {% endif %}
 
     <h4 class="mt-4">Factura</h4>
     <div class="form-group mt-3">
@@ -130,6 +179,13 @@
       </div>
     </div>
 
+    {% if billing_count < 5 %}
+    <div class="form-group mt-3" id="save-billing-group">
+      {{ form.save_billing(class="form-check-input") }}
+      {{ form.save_billing.label(class="form-check-label") }}
+    </div>
+    {% endif %}
+
     <div class="form-group mt-4">
       {{ form.submit(class="btn btn-primary") }}
     </div>
@@ -142,6 +198,7 @@
     const paymentAddressFields = document.querySelector('#payment-address-fields');
     const needInvoiceCheckbox = document.querySelector('#need_invoice');
     const invoiceFields = document.querySelector('#invoice-fields');
+    const saveBillingGroup = document.querySelector('#save-billing-group');
 
     function togglePaymentAddressFields() {
       if (sameAddressCheckbox.checked) {
@@ -154,8 +211,10 @@
     function toggleInvoiceFields() {
       if (needInvoiceCheckbox.checked) {
         invoiceFields.style.display = 'block';
+        saveBillingGroup.style.display = 'block';
       } else {
         invoiceFields.style.display = 'none';
+        saveBillingGroup.style.display = 'none';
       }
     }
 
