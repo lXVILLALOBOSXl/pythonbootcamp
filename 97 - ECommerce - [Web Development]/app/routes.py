@@ -119,6 +119,10 @@ def checkout():
 
     if not cart:
         return redirect(url_for('main.index'))
+    
+    if not current_user.is_authenticated:
+        flash('Por favor inicia sesión o crea una cuenta para proceder con la compra.', 'warning')
+        return redirect(url_for('main.checkout_options', next=url_for('main.checkout')))
 
     if not current_user.is_verified:
         send_confirmation_email(current_user.email)
@@ -137,13 +141,12 @@ def checkout():
     total = sum(item['price'] * item['quantity'] for item in cart)
     
     if form.validate_on_submit():
+        print('Form validated')
         shipping_address_id = request.form.get('shipping_address')
-        payment_address_id =  request.form.get('payment_address')
+        payment_address_id = request.form.get('payment_address')
         billing_info_id = request.form.get('billing_info')
 
-        
-
-        if form.save_shipping.data:
+        if shipping_address_id == 'new':
             shipping_address = ShippingAddress(
                 client_id=current_user.id,
                 nombre=form.shipping_nombre.data,
@@ -159,13 +162,14 @@ def checkout():
                 ciudad=form.shipping_ciudad.data,
                 estado=form.shipping_estado.data
             )
-            db.session.add(shipping_address)
+            if form.save_shipping.data:
+                db.session.add(shipping_address)
         else:
             shipping_address = ShippingAddress.query.get(shipping_address_id)
         
         if form.same_address.data:
             payment_address = shipping_address
-        elif form.save_payment.data:
+        elif payment_address_id == 'new':
             payment_address = PaymentAddress(
                 client_id=current_user.id,
                 nombre=form.payment_nombre.data,
@@ -179,12 +183,13 @@ def checkout():
                 ciudad=form.payment_ciudad.data,
                 estado=form.payment_estado.data
             )
-            db.session.add(payment_address)
+            if form.save_payment.data:
+                db.session.add(payment_address)
         else:
             payment_address = PaymentAddress.query.get(payment_address_id)
         
         if form.need_invoice.data:
-            if form.save_billing.data:
+            if billing_info_id == 'new':
                 billing_info = Billing(
                     client_id=current_user.id,
                     rfc=form.payment_rfc.data,
@@ -193,9 +198,34 @@ def checkout():
                     uso_cfdi=form.uso_cfdi.data,
                     cp=form.cp_invoice.data
                 )
-                db.session.add(billing_info)
+                if form.save_billing.data:
+                    db.session.add(billing_info)
             else:
                 billing_info = Billing.query.get(billing_info_id)
+        else:
+            billing_info = None
+
+        order = Order(
+            client_id=current_user.id,
+            total_amount=total,
+            uso_cfdi=form.uso_cfdi.data if form.need_invoice.data else None,
+            shipping_address_id=shipping_address.id,
+            payment_address_id=payment_address.id,
+            forma_de_pago="",
+            metodo_de_pago=""
+        )
+        db.session.add(order)
+        db.session.flush()
+
+        for item in cart:
+            order_item = OrderItem(
+                order_id=order.id,
+                product_id=item['id'],
+                quantity=item['quantity'],
+                price=item['price']
+            )
+            db.session.add(order_item)
+    
 
         db.session.commit()
         flash('Compra completada con éxito.', 'success')
@@ -286,6 +316,7 @@ def product(id):
 @main.route('/add/<int:id>', methods=['POST'])
 def add(id):
     product = Product.query.get_or_404(id)
+    selected_quantity = int(request.form.get('quantity', 1))  # Get the selected quantity from the form, default to 1
 
     if 'cart' not in session:
         session['cart'] = []
@@ -294,20 +325,20 @@ def add(id):
 
     for item in cart:
         if item['id'] == product.id:
-            item['quantity'] = min(item['quantity'] + 1, item['stock'])  # Ensure not to exceed stock
+            item['quantity'] = min(item['quantity'] + selected_quantity, item['stock'])  # Ensure not to exceed stock
             break
     else:
         cart.append({
             'id': product.id,
             'name': product.name,
             'price': product.price,
-            'quantity': 1,
+            'quantity': selected_quantity,
             'stock': product.units_in_stock,
             'old_price': product.old_price
         })
 
     session['cart'] = cart
-    flash(f'Producto {product.name} añandido a tu carrito!', 'success')
+    flash(f'{selected_quantity} unidad(es) de {product.name} añadido(s) a tu carrito!', 'success')
     
     return redirect(url_for('main.index'))
 

@@ -1,53 +1,53 @@
-{% include "header.html" %}
-
-{% block content %}
+{% include "header.html" %} {% block content %}
 <div class="container mt-5">
-    <h2 class="mt-3">Mi cuenta</h2>
-    <div class="row mt-4">
-        <div class="col-md-6">
-            <h4>Información de Usuario</h4>
-            <p><strong>Nombre:</strong> {{ user.name }}</p>
-            <p><strong>Correo Electrónico:</strong> {{ user.email }}</p>
-        </div>
-        <div class="col-md-6">
-            <h4>Direcciones de Envío</h4>
-            {% for address in shipping_addresses %}
-                <p><strong>Nombre:</strong> {{ address.nombre }}</p>
-                <p><strong>Calle:</strong> {{ address.calle }}</p>
-                <p><strong>Colonia:</strong> {{ address.colonia }}</p>
-                <p><strong>Municipio:</strong> {{ address.municipio }}</p>
-                <p><strong>Número:</strong> {{ address.numero }}</p>
-                <hr>
-            {% endfor %}
-        </div>
-        <div class="col-md-6">
-            <h4>Direcciones de Pago</h4>
-            {% for address in payment_addresses %}
-                <p><strong>Nombre:</strong> {{ address.nombre }}</p>
-                <p><strong>Calle:</strong> {{ address.calle }}</p>
-                <p><strong>Colonia:</strong> {{ address.colonia }}</p>
-                <p><strong>Municipio:</strong> {{ address.municipio }}</p>
-                <p><strong>Número:</strong> {{ address.numero }}</p>
-                <hr>
-            {% endfor %}
-        </div>
-        <div class="col-md-12">
-            <h4>Órdenes</h4>
-            {% for order in orders %}
-                <p><strong>Orden ID:</strong> {{ order.id }}</p>
-                <p><strong>Fecha de Pedido:</strong> {{ order.date_ordered }}</p>
-                <p><strong>Monto Total:</strong> MX${{ order.total_amount }}</p>
-                <h5>Items de la Orden:</h5>
-                <ul>
-                {% for item in order.order_items %}
-                    <li><strong>Producto:</strong> {{ item.product.name }} | <strong>Cantidad:</strong> {{ item.quantity }} | <strong>Precio:</strong> MX${{ item.price }}</li>
-                {% endfor %}
-                </ul>
-                <hr>
-            {% endfor %}
-        </div>
+  <h2 class="mt-3">Mi cuenta</h2>
+  <div class="row mt-4">
+    <div class="col-md-6">
+      <h4>Información de Usuario</h4>
+      <p><strong>Nombre:</strong> {{ user.name }}</p>
+      <p><strong>Correo Electrónico:</strong> {{ user.email }}</p>
     </div>
+    <div class="col-md-6">
+      <h4>Direcciones de Envío</h4>
+      {% for address in shipping_addresses %}
+      <p><strong>Nombre:</strong> {{ address.nombre }}</p>
+      <p><strong>Calle:</strong> {{ address.calle }}</p>
+      <p><strong>Colonia:</strong> {{ address.colonia }}</p>
+      <p><strong>Municipio:</strong> {{ address.municipio }}</p>
+      <p><strong>Número:</strong> {{ address.numero }}</p>
+      <hr />
+      {% endfor %}
+    </div>
+    <div class="col-md-6">
+      <h4>Direcciones de Pago</h4>
+      {% for address in payment_addresses %}
+      <p><strong>Nombre:</strong> {{ address.nombre }}</p>
+      <p><strong>Calle:</strong> {{ address.calle }}</p>
+      <p><strong>Colonia:</strong> {{ address.colonia }}</p>
+      <p><strong>Municipio:</strong> {{ address.municipio }}</p>
+      <p><strong>Número:</strong> {{ address.numero }}</p>
+      <hr />
+      {% endfor %}
+    </div>
+    <div class="col-md-12">
+      <h4>Órdenes</h4>
+      {% for order in orders %}
+      <p><strong>Orden ID:</strong> {{ order.id }}</p>
+      <p><strong>Fecha de Pedido:</strong> {{ order.date_ordered }}</p>
+      <p><strong>Monto Total:</strong> MX${{ order.total_amount }}</p>
+      <h5>Items de la Orden:</h5>
+      <ul>
+        {% for item in order.order_items %}
+        <li>
+          <strong>Producto:</strong> {{ item.product.name }} |
+          <strong>Cantidad:</strong> {{ item.quantity }} |
+          <strong>Precio:</strong> MX${{ item.price }}
+        </li>
+        {% endfor %}
+      </ul>
+      <hr />
+      {% endfor %}
+    </div>
+  </div>
 </div>
-{% endblock %}
-
-{% include "footer.html" %}
+{% endblock %} {% include "footer.html" %}

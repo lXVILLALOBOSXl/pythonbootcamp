@@ -1,74 +1,102 @@
-{% include "header.html" %}
-
-{% block content %}
+{% include "header.html" %} {% block content %}
 
 <!-- Product Section -->
 <div class="container-fluid mt-5 py-5 bg-light">
-    <div class="row justify-content-center">
-      <div class="col-11">
-        <div class="row">
-          <div class="col-12 col-md-6 mb-4">
-            <!-- Carousel for product images -->
-            <div id="productCarousel" class="carousel slide" data-bs-ride="carousel">
-              <div class="carousel-inner">
-                {% for image in images %}
-                <div class="carousel-item {% if loop.first %}active{% endif %}">
-                  <img src="{{ url_for('static', filename='img/' ~ image.img_src) }}" class="d-block w-100 product-img" alt="{{ product.name }}">
-                </div>
-                {% endfor %}
+  <div class="row justify-content-center">
+    <div class="col-11">
+      <div class="row">
+        <div class="col-12 col-md-6 mb-4">
+          <!-- Carousel for product images -->
+          <div
+            id="productCarousel"
+            class="carousel slide"
+            data-bs-ride="carousel"
+          >
+            <div class="carousel-inner">
+              {% for image in images %}
+              <div class="carousel-item {% if loop.first %}active{% endif %}">
+                <img
+                  src="{{ url_for('static', filename='img/' ~ image.img_src) }}"
+                  class="d-block w-100 product-img"
+                  alt="{{ product.name }}"
+                />
               </div>
-              <button class="carousel-control-prev custom-carousel-control" type="button" data-bs-target="#productCarousel" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon custom-carousel-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Previous</span>
-              </button>
-              <button class="carousel-control-next custom-carousel-control" type="button" data-bs-target="#productCarousel" data-bs-slide="next">
-                <span class="carousel-control-next-icon custom-carousel-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Next</span>
-              </button>
+              {% endfor %}
             </div>
+            <button
+              class="carousel-control-prev custom-carousel-control"
+              type="button"
+              data-bs-target="#productCarousel"
+              data-bs-slide="prev"
+            >
+              <span
+                class="carousel-control-prev-icon custom-carousel-icon"
+                aria-hidden="true"
+              ></span>
+              <span class="visually-hidden">Previous</span>
+            </button>
+            <button
+              class="carousel-control-next custom-carousel-control"
+              type="button"
+              data-bs-target="#productCarousel"
+              data-bs-slide="next"
+            >
+              <span
+                class="carousel-control-next-icon custom-carousel-icon"
+                aria-hidden="true"
+              ></span>
+              <span class="visually-hidden">Next</span>
+            </button>
           </div>
-          <div class="col-12 col-md-6 d-flex flex-column">
-            <h3>{{ product.name }}</h3>
-            <p><strong>Marca:</strong> {{ product.brand }}</p>
-            <p><strong>Categoría:</strong> {{ product.category }}</p>
-            <p><strong>SKU Interno:</strong> {{ product.internal_sku }}</p>
-            <p><strong>SKU de la Marca:</strong> {{ product.brand_sku }}</p>
-            <p class="card-text">Stock: 
-              {% if product.units_in_stock > 0 %}
-              <span class="text-success">{{ product.units_in_stock }} disponibles</span>
-              <select class="form-select mt-2" aria-label="Cantidad de piezas">
-                {% for i in range(1, product.units_in_stock + 1) %}
-                <option value="{{ i }}">{{ i }}</option>
-                {% endfor %}
-              </select>
-              {% else %}
-              <span class="text-danger">Agotado</span>
-              {% endif %}
-            </p>
-            <p><strong>Precio:</strong> 
-              {% if product.old_price %}
-              <span class="text-danger"><s>MX${{ product.old_price }}</s></span>
-              <span class="text-success">MX${{ product.price }}</span>
-              {% else %}
-              <span>MX${{ product.price }}</span>
-              {% endif %}
-            </p>
-            <p><strong>Descripción:</strong> {{ product.description }}</p>
+        </div>
+        <div class="col-12 col-md-6 d-flex flex-column">
+          <h3>{{ product.name }}</h3>
+          <p><strong>Marca:</strong> {{ product.brand }}</p>
+          <p><strong>Categoría:</strong> {{ product.category }}</p>
+          <p><strong>SKU Interno:</strong> {{ product.internal_sku }}</p>
+          <p><strong>SKU de la Marca:</strong> {{ product.brand_sku }}</p>
+          <p>
+            <strong>Precio:</strong>
+            {% if product.old_price %}
+            <span class="text-danger"><s>MX${{ product.old_price }}</s></span>
+            <span class="text-success">MX${{ product.price }}</span>
+            {% else %}
+            <span>MX${{ product.price }}</span>
+            {% endif %}
+          </p>
+          <p><strong>Descripción:</strong> {{ product.description }}</p>
+          {% if product.units_in_stock > 0 %}
+          <form action="{{ url_for('main.add', id=product.id) }}" method="post">
+            <select
+              class="form-select mt-2"
+              aria-label="Cantidad de piezas"
+              name="quantity"
+            >
+              {% for i in range(1, product.units_in_stock + 1) %}
+              <option value="{{ i }}">{{ i }}</option>
+              {% endfor %}
+            </select>
+            <p></p>
             <div class="mt-auto">
-              {% if product.units_in_stock > 0 %}
-              <form action="{{ url_for('main.add', id=product.id) }}" method="post">
-                <button type="submit" class="btn btn-primary">Agregar al carrito</button>
-              </form>
-              {% else %}
-              <a href="{{ url_for('main.notify', id=product.id) }}" class="btn btn-warning">Notificarme de nuevas existencias</a>
-              {% endif %}
+              <button type="submit" class="btn btn-primary">
+                Agregar al carrito
+              </button>
             </div>
+          </form>
+          {% else %}
+          <span class="text-danger">Agotado</span>
+          <div class="mt-auto">
+            <a
+              href="{{ url_for('main.notify', id=product.id) }}"
+              class="btn btn-warning"
+              >Notificarme de nuevas existencias</a
+            >
           </div>
+          {% endif %}
         </div>
       </div>
     </div>
   </div>
+</div>
 
-{% endblock %}
-
-{% include "footer.html" %}
+{% endblock %} {% include "footer.html" %}

@@ -1,6 +1,4 @@
-{% include "header.html" %}
-
-{% block content %}
+{% include "header.html" %} {% block content %}
 <div class="container mt-5">
   <h2 class="mt-3">Proceso de Pago</h2>
 
@@ -23,9 +21,10 @@
             <td>{{ item.name }}</td>
             <td>
               {% if item.old_price %}
-              <span style="text-decoration: line-through;">MX${{ "%.2f"|format(item.old_price) }}</span>
-              {% endif %}
-              MX${{ "%.2f"|format(item.price) }}
+              <span style="text-decoration: line-through"
+                >MX${{ "%.2f"|format(item.old_price) }}</span
+              >
+              {% endif %} MX${{ "%.2f"|format(item.price) }}
             </td>
             <td>{{ item.quantity }}</td>
             <td>MX${{ "%.2f"|format(item.price * item.quantity) }}</td>
@@ -38,81 +37,111 @@
   </div>
   <!-- End Cart Summary -->
 
-  <form id="checkout-form" method="POST" action="{{ url_for('main.checkout') }}">
+  <form
+    id="checkout-form"
+    method="POST"
+    action="{{ url_for('main.checkout') }}"
+  >
     {{ form.hidden_tag() }}
 
     <!-- Shipping Address Section -->
     <h4>Dirección de Envío</h4>
     {% if saved_shipping_addresses %}
     <div class="saved-addresses mb-3">
-      {% set first = True %}
-      {% for address in saved_shipping_addresses %}
+      {% set first = True %} {% for address in saved_shipping_addresses %}
       <div class="address-item p-3 mb-3 border rounded">
-        <input type="radio" name="shipping_address" id="shipping_address_{{ address.id }}" value="{{ address.id }}" class="select-address" {% if first %}checked{% endif %}>
+        <input
+          type="radio"
+          name="shipping_address"
+          id="shipping_address_{{ address.id }}"
+          value="{{ address.id }}"
+          class="select-address"
+          {%
+          if
+          first
+          %}checked{%
+          endif
+          %}
+        />
         <label for="shipping_address_{{ address.id }}" class="form-check-label">
           <p>{{ address.nombre }} {{ address.apellidos }}</p>
           <p>{{ address.calle }} {{ address.numero }} {{ address.num_int }}</p>
-          <p>{{ address.colonia }}, {{ address.ciudad }}, {{ address.estado }} {{ address.cp }}</p>
+          <p>
+            {{ address.colonia }}, {{ address.ciudad }}, {{ address.estado }} {{
+            address.cp }}
+          </p>
         </label>
       </div>
-      {% set first = False %}
-      {% endfor %}
+      {% set first = False %} {% endfor %}
     </div>
     <div class="form-check mb-3">
-      <input type="radio" name="shipping_address" id="add_new_shipping" value="new" class="form-check-input select-address">
-      <label class="form-check-label" for="add_new_shipping">Agregar nueva</label>
+      <input
+        type="radio"
+        name="shipping_address"
+        id="add_new_shipping"
+        value="new"
+        class="form-check-input select-address"
+      />
+      <label class="form-check-label" for="add_new_shipping"
+        >Agregar nueva</label
+      >
     </div>
     {% else %}
-    <input type="hidden" name="shipping_address" value="new">
+    <input type="hidden" name="shipping_address" value="new" />
     {% endif %}
-    <div id="new-shipping-address" class="{% if saved_shipping_addresses %}collapse{% else %}show{% endif %}">
+    <div
+      id="new-shipping-address"
+      class="{% if saved_shipping_addresses %}collapse{% else %}show{% endif %}"
+    >
       <div class="form-group">
-        {{ form.shipping_nombre.label(class="form-label") }}
-        {{ form.shipping_nombre(class="form-control", id="shipping_nombre") }}
+        {{ form.shipping_nombre.label(class="form-label") }} {{
+        form.shipping_nombre(class="form-control", id="shipping_nombre") }}
       </div>
       <div class="form-group mt-3">
-        {{ form.shipping_apellidos.label(class="form-label") }}
-        {{ form.shipping_apellidos(class="form-control", id="shipping_apellidos") }}
+        {{ form.shipping_apellidos.label(class="form-label") }} {{
+        form.shipping_apellidos(class="form-control", id="shipping_apellidos")
+        }}
       </div>
       <div class="form-group mt-3">
-        {{ form.shipping_celular.label(class="form-label") }}
-        {{ form.shipping_celular(class="form-control", id="shipping_celular") }}
+        {{ form.shipping_celular.label(class="form-label") }} {{
+        form.shipping_celular(class="form-control", id="shipping_celular") }}
       </div>
       <div class="form-group mt-3">
-        {{ form.shipping_empresa.label(class="form-label") }}
-        {{ form.shipping_empresa(class="form-control", id="shipping_empresa") }}
+        {{ form.shipping_empresa.label(class="form-label") }} {{
+        form.shipping_empresa(class="form-control", id="shipping_empresa") }}
       </div>
       <div class="form-group mt-3">
-        {{ form.shipping_calle.label(class="form-label") }}
-        {{ form.shipping_calle(class="form-control", id="shipping_calle") }}
+        {{ form.shipping_calle.label(class="form-label") }} {{
+        form.shipping_calle(class="form-control", id="shipping_calle") }}
       </div>
       <div class="form-group mt-3">
-        {{ form.shipping_numero.label(class="form-label") }}
-        {{ form.shipping_numero(class="form-control", id="shipping_numero") }}
+        {{ form.shipping_numero.label(class="form-label") }} {{
+        form.shipping_numero(class="form-control", id="shipping_numero") }}
       </div>
       <div class="form-group mt-3">
-        {{ form.shipping_num_int.label(class="form-label") }}
-        {{ form.shipping_num_int(class="form-control", id="shipping_num_int") }}
+        {{ form.shipping_num_int.label(class="form-label") }} {{
+        form.shipping_num_int(class="form-control", id="shipping_num_int") }}
       </div>
       <div class="form-group mt-3">
-        {{ form.shipping_referencias.label(class="form-label") }}
-        {{ form.shipping_referencias(class="form-control", id="shipping_referencias") }}
+        {{ form.shipping_referencias.label(class="form-label") }} {{
+        form.shipping_referencias(class="form-control",
+        id="shipping_referencias") }}
       </div>
       <div class="form-group mt-3">
-        {{ form.shipping_colonia.label(class="form-label") }}
-        {{ form.shipping_colonia(class="form-control", id="shipping_colonia") }}
+        {{ form.shipping_colonia.label(class="form-label") }} {{
+        form.shipping_colonia(class="form-control", id="shipping_colonia") }}
       </div>
       <div class="form-group mt-3">
-        {{ form.shipping_cp.label(class="form-label") }}
-        {{ form.shipping_cp(class="form-control", id="shipping_cp") }}
+        {{ form.shipping_cp.label(class="form-label") }} {{
+        form.shipping_cp(class="form-control", id="shipping_cp") }}
       </div>
       <div class="form-group mt-3">
-        {{ form.shipping_ciudad.label(class="form-label") }}
-        {{ form.shipping_ciudad(class="form-control", id="shipping_ciudad") }}
+        {{ form.shipping_ciudad.label(class="form-label") }} {{
+        form.shipping_ciudad(class="form-control", id="shipping_ciudad") }}
       </div>
       <div class="form-group mt-3">
-        {{ form.shipping_estado.label(class="form-label") }}
-        {{ form.shipping_estado(class="form-control", id="shipping_estado") }}
+        {{ form.shipping_estado.label(class="form-label") }} {{
+        form.shipping_estado(class="form-control", id="shipping_estado") }}
       </div>
       <div class="form-group mt-3">
         {{ form.save_shipping(class="form-check-input", id="save_shipping") }}
@@ -123,72 +152,107 @@
     <!-- Payment Address Section -->
     <h4 class="mt-4">Dirección de Facturación</h4>
     <div class="form-group mt-3">
-      {{ form.same_address(class="form-check-input", id="same_address") }}
-      {{ form.same_address.label(class="form-check-label") }}
+      {{ form.same_address(class="form-check-input", id="same_address") }} {{
+      form.same_address.label(class="form-check-label") }}
     </div>
-    <div id="payment-address-fields" class="{% if form.same_address.data %}d-none{% endif %}">
+    <div
+      id="payment-address-fields"
+      class="{% if form.same_address.data %}d-none{% endif %}"
+    >
       {% if saved_payment_addresses %}
       <div class="saved-addresses mb-3">
-        {% set first_payment = True %}
-        {% for address in saved_payment_addresses %}
+        {% set first_payment = True %} {% for address in saved_payment_addresses
+        %}
         <div class="address-item p-3 mb-3 border rounded">
-          <input type="radio" name="payment_address" id="payment_address_{{ address.id }}" value="{{ address.id }}" class="select-address" {% if first_payment %}checked{% endif %}>
-          <label for="payment_address_{{ address.id }}" class="form-check-label">
+          <input
+            type="radio"
+            name="payment_address"
+            id="payment_address_{{ address.id }}"
+            value="{{ address.id }}"
+            class="select-address"
+            {%
+            if
+            first_payment
+            %}checked{%
+            endif
+            %}
+          />
+          <label
+            for="payment_address_{{ address.id }}"
+            class="form-check-label"
+          >
             <p>{{ address.nombre }} {{ address.apellidos }}</p>
-            <p>{{ address.calle }} {{ address.numero }} {{ address.num_int }}</p>
-            <p>{{ address.colonia }}, {{ address.ciudad }}, {{ address.estado }} {{ address.cp }}</p>
+            <p>
+              {{ address.calle }} {{ address.numero }} {{ address.num_int }}
+            </p>
+            <p>
+              {{ address.colonia }}, {{ address.ciudad }}, {{ address.estado }}
+              {{ address.cp }}
+            </p>
           </label>
         </div>
-        {% set first_payment = False %}
-        {% endfor %}
+        {% set first_payment = False %} {% endfor %}
       </div>
       <div class="form-check mb-3">
-        <input type="radio" name="payment_address" id="add_new_payment" value="new" class="form-check-input select-address">
-        <label class="form-check-label" for="add_new_payment">Agregar nueva</label>
+        <input
+          type="radio"
+          name="payment_address"
+          id="add_new_payment"
+          value="new"
+          class="form-check-input select-address"
+        />
+        <label class="form-check-label" for="add_new_payment"
+          >Agregar nueva</label
+        >
       </div>
       {% else %}
-      <input type="hidden" name="payment_address" value="new"> 
+      <input type="hidden" name="payment_address" value="new" />
       {% endif %}
-      <div id="new-payment-address" class="{% if saved_payment_addresses %}collapse{% else %}show{% endif %}">
+      <div
+        id="new-payment-address"
+        class="{% if saved_payment_addresses %}collapse{% else %}show{% endif %}"
+      >
         <div class="form-group">
-          {{ form.payment_nombre.label(class="form-label") }}
-          {{ form.payment_nombre(class="form-control", id="payment_nombre") }}
+          {{ form.payment_nombre.label(class="form-label") }} {{
+          form.payment_nombre(class="form-control", id="payment_nombre") }}
         </div>
         <div class="form-group mt-3">
-          {{ form.payment_apellidos.label(class="form-label") }}
-          {{ form.payment_apellidos(class="form-control", id="payment_apellidos") }}
+          {{ form.payment_apellidos.label(class="form-label") }} {{
+          form.payment_apellidos(class="form-control", id="payment_apellidos")
+          }}
         </div>
         <div class="form-group mt-3">
-          {{ form.payment_calle.label(class="form-label") }}
-          {{ form.payment_calle(class="form-control", id="payment_calle") }}
+          {{ form.payment_calle.label(class="form-label") }} {{
+          form.payment_calle(class="form-control", id="payment_calle") }}
         </div>
         <div class="form-group mt-3">
-          {{ form.payment_numero.label(class="form-label") }}
-          {{ form.payment_numero(class="form-control", id="payment_numero") }}
+          {{ form.payment_numero.label(class="form-label") }} {{
+          form.payment_numero(class="form-control", id="payment_numero") }}
         </div>
         <div class="form-group mt-3">
-          {{ form.payment_num_int.label(class="form-label") }}
-          {{ form.payment_num_int(class="form-control", id="payment_num_int") }}
+          {{ form.payment_num_int.label(class="form-label") }} {{
+          form.payment_num_int(class="form-control", id="payment_num_int") }}
         </div>
         <div class="form-group mt-3">
-          {{ form.payment_referencias.label(class="form-label") }}
-          {{ form.payment_referencias(class="form-control", id="payment_referencias") }}
+          {{ form.payment_referencias.label(class="form-label") }} {{
+          form.payment_referencias(class="form-control",
+          id="payment_referencias") }}
         </div>
         <div class="form-group mt-3">
-          {{ form.payment_colonia.label(class="form-label") }}
-          {{ form.payment_colonia(class="form-control", id="payment_colonia") }}
+          {{ form.payment_colonia.label(class="form-label") }} {{
+          form.payment_colonia(class="form-control", id="payment_colonia") }}
         </div>
         <div class="form-group mt-3">
-          {{ form.payment_cp.label(class="form-label") }}
-          {{ form.payment_cp(class="form-control", id="payment_cp") }}
+          {{ form.payment_cp.label(class="form-label") }} {{
+          form.payment_cp(class="form-control", id="payment_cp") }}
         </div>
         <div class="form-group mt-3">
-          {{ form.payment_ciudad.label(class="form-label") }}
-          {{ form.payment_ciudad(class="form-control", id="payment_ciudad") }}
+          {{ form.payment_ciudad.label(class="form-label") }} {{
+          form.payment_ciudad(class="form-control", id="payment_ciudad") }}
         </div>
         <div class="form-group mt-3">
-          {{ form.payment_estado.label(class="form-label") }}
-          {{ form.payment_estado(class="form-control", id="payment_estado") }}
+          {{ form.payment_estado.label(class="form-label") }} {{
+          form.payment_estado(class="form-control", id="payment_estado") }}
         </div>
         <div class="form-group mt-3">
           {{ form.save_payment(class="form-check-input", id="save_payment") }}
@@ -200,51 +264,77 @@
     <!-- Invoice Section -->
     <h4 class="mt-4">Factura</h4>
     <div class="form-group mt-3">
-      {{ form.need_invoice(class="form-check-input", id="need_invoice") }}
-      {{ form.need_invoice.label(class="form-check-label") }}
+      {{ form.need_invoice(class="form-check-input", id="need_invoice") }} {{
+      form.need_invoice.label(class="form-check-label") }}
     </div>
-    <div id="invoice-fields" class="{% if not form.need_invoice.data %}d-none{% endif %}">
+    <div
+      id="invoice-fields"
+      class="{% if not form.need_invoice.data %}d-none{% endif %}"
+    >
       {% if saved_billing_info %}
       <div class="saved-addresses mb-3">
-        {% set first_billing = True %}
-        {% for billing in saved_billing_info %}
+        {% set first_billing = True %} {% for billing in saved_billing_info %}
         <div class="address-item p-3 mb-3 border rounded">
-          <input type="radio" name="billing_info" id="billing_info_{{ billing.id }}" value="{{ billing.id }}" class="select-address" {% if first_billing %}checked{% endif %}>
+          <input
+            type="radio"
+            name="billing_info"
+            id="billing_info_{{ billing.id }}"
+            value="{{ billing.id }}"
+            class="select-address"
+            {%
+            if
+            first_billing
+            %}checked{%
+            endif
+            %}
+          />
           <label for="billing_info_{{ billing.id }}" class="form-check-label">
             <p>{{ billing.rfc }}</p>
             <p>{{ billing.razon_social }}</p>
           </label>
         </div>
-        {% set first_billing = False %}
-        {% endfor %}
+        {% set first_billing = False %} {% endfor %}
       </div>
       <div class="form-check mb-3">
-        <input type="radio" name="billing_info" id="add_new_billing" value="new" class="form-check-input select-address">
-        <label class="form-check-label" for="add_new_billing">Agregar nueva</label>
+        <input
+          type="radio"
+          name="billing_info"
+          id="add_new_billing"
+          value="new"
+          class="form-check-input select-address"
+        />
+        <label class="form-check-label" for="add_new_billing"
+          >Agregar nueva</label
+        >
       </div>
       {% else %}
-      <input type="hidden" name="billing_info" value="new">
+      <input type="hidden" name="billing_info" value="new" />
       {% endif %}
-      <div id="new-billing-info" class="{% if saved_billing_info %}collapse{% else %}show{% endif %}">
+      <div
+        id="new-billing-info"
+        class="{% if saved_billing_info %}collapse{% else %}show{% endif %}"
+      >
         <div class="form-group mt-3">
-          {{ form.payment_rfc.label(class="form-label") }}
-          {{ form.payment_rfc(class="form-control", id="payment_rfc") }}
+          {{ form.payment_rfc.label(class="form-label") }} {{
+          form.payment_rfc(class="form-control", id="payment_rfc") }}
         </div>
         <div class="form-group mt-3">
-          {{ form.payment_razon_social.label(class="form-label") }}
-          {{ form.payment_razon_social(class="form-control", id="payment_razon_social") }}
+          {{ form.payment_razon_social.label(class="form-label") }} {{
+          form.payment_razon_social(class="form-control",
+          id="payment_razon_social") }}
         </div>
         <div class="form-group mt-3">
-          {{ form.cp_invoice.label(class="form-label") }}
-          {{ form.cp_invoice(class="form-control", id="cp_invoice") }}
+          {{ form.cp_invoice.label(class="form-label") }} {{
+          form.cp_invoice(class="form-control", id="cp_invoice") }}
         </div>
         <div class="form-group mt-3">
-          {{ form.payment_regimen_fiscal.label(class="form-label") }}
-          {{ form.payment_regimen_fiscal(class="form-control", id="payment_regimen_fiscal") }}
+          {{ form.payment_regimen_fiscal.label(class="form-label") }} {{
+          form.payment_regimen_fiscal(class="form-control",
+          id="payment_regimen_fiscal") }}
         </div>
         <div class="form-group mt-3">
-          {{ form.uso_cfdi.label(class="form-label") }}
-          {{ form.uso_cfdi(class="form-control", id="uso_cfdi") }}
+          {{ form.uso_cfdi.label(class="form-label") }} {{
+          form.uso_cfdi(class="form-control", id="uso_cfdi") }}
         </div>
         <div class="form-group mt-3">
           {{ form.save_billing(class="form-check-input", id="save_billing") }}
@@ -260,127 +350,183 @@
 </div>
 
 <script>
-  document.addEventListener('DOMContentLoaded', function () {
-    const sameAddressCheckbox = document.querySelector('#same_address');
-    const paymentAddressFields = document.querySelector('#payment-address-fields');
-    const needInvoiceCheckbox = document.querySelector('#need_invoice');
-    const invoiceFields = document.querySelector('#invoice-fields');
-    const selectAddressButtons = document.querySelectorAll('.select-address');
+  document.addEventListener("DOMContentLoaded", function () {
+    const sameAddressCheckbox = document.querySelector("#same_address");
+    const paymentAddressFields = document.querySelector(
+      "#payment-address-fields"
+    );
+    const needInvoiceCheckbox = document.querySelector("#need_invoice");
+    const invoiceFields = document.querySelector("#invoice-fields");
+    const selectAddressButtons = document.querySelectorAll(".select-address");
 
     // If there is no saved shipping addresses, fields are required by default
     if (!document.querySelector('input[name="shipping_address"]:checked')) {
-      document.getElementById('new-shipping-address').querySelectorAll('input, select').forEach(input => {
-        if (input.id === 'save_shipping' || input.id === 'shipping_num_int' || input.id === 'shipping_referencias' || input.id === 'shipping_empresa') {
-              input.required = false;
-            } else {
-              input.required = true;
-            }
-      });
+      document
+        .getElementById("new-shipping-address")
+        .querySelectorAll("input, select")
+        .forEach((input) => {
+          if (
+            input.id === "save_shipping" ||
+            input.id === "shipping_num_int" ||
+            input.id === "shipping_referencias" ||
+            input.id === "shipping_empresa"
+          ) {
+            input.required = false;
+          } else {
+            input.required = true;
+          }
+        });
     }
 
     function togglePaymentAddressFields() {
       if (sameAddressCheckbox.checked) {
-        paymentAddressFields.classList.add('d-none');
-        document.getElementById('new-payment-address').querySelectorAll('input, select').forEach(input => {
-          input.required = false;
-        });
+        paymentAddressFields.classList.add("d-none");
+        document
+          .getElementById("new-payment-address")
+          .querySelectorAll("input, select")
+          .forEach((input) => {
+            input.required = false;
+          });
       } else {
-        paymentAddressFields.classList.remove('d-none');
+        paymentAddressFields.classList.remove("d-none");
         // If there is saved payment addresses, first one is selected by default, so we don't need to add required attribute
         if (document.querySelector('input[name="payment_address"]:checked')) {
           return;
         }
-        document.getElementById('new-payment-address').querySelectorAll('input, select').forEach(input => {
-          if (input.id !== 'save_payment' && input.id !== 'payment_num_int' && input.id !== 'payment_referencias') {
-            input.required = true;
-          }
-        });
+        document
+          .getElementById("new-payment-address")
+          .querySelectorAll("input, select")
+          .forEach((input) => {
+            if (
+              input.id !== "save_payment" &&
+              input.id !== "payment_num_int" &&
+              input.id !== "payment_referencias"
+            ) {
+              input.required = true;
+            }
+          });
       }
     }
 
     function toggleInvoiceFields() {
       if (needInvoiceCheckbox.checked) {
-        invoiceFields.classList.remove('d-none');
+        invoiceFields.classList.remove("d-none");
         // If there is saved billing info, first one is selected by default, so we don't need to add required attribute
         if (document.querySelector('input[name="billing_info"]:checked')) {
           return;
         }
-        document.getElementById('new-billing-info').querySelectorAll('input, select').forEach(input => {
-          if (input.id !== 'save_billing') {
-            input.required = true;
-          }
-        });
+        document
+          .getElementById("new-billing-info")
+          .querySelectorAll("input, select")
+          .forEach((input) => {
+            if (input.id !== "save_billing") {
+              input.required = true;
+            }
+          });
       } else {
-        invoiceFields.classList.add('d-none');
-        document.getElementById('new-billing-info').querySelectorAll('input, select').forEach(input => {
-          input.required = false;
-        });
+        invoiceFields.classList.add("d-none");
+        document
+          .getElementById("new-billing-info")
+          .querySelectorAll("input, select")
+          .forEach((input) => {
+            input.required = false;
+          });
       }
     }
 
     function handleSelectAddress(event) {
       const addressType = event.target.name;
       const selectedValue = event.target.value;
-      if (addressType === 'shipping_address') {
-        if (selectedValue === 'new') {
-
-          document.getElementById('new-shipping-address').classList.add('show');
-          document.getElementById('new-shipping-address').querySelectorAll('input, select').forEach(input => {
-            if (input.id === 'save_shipping' || input.id === 'shipping_num_int' || input.id === 'shipping_referencias' || input.id === 'shipping_empresa') {
-              input.required = false;
-            } else {
-              input.required = true;
-            }
-          });
+      if (addressType === "shipping_address") {
+        if (selectedValue === "new") {
+          document.getElementById("new-shipping-address").classList.add("show");
+          document
+            .getElementById("new-shipping-address")
+            .querySelectorAll("input, select")
+            .forEach((input) => {
+              if (
+                input.id === "save_shipping" ||
+                input.id === "shipping_num_int" ||
+                input.id === "shipping_referencias" ||
+                input.id === "shipping_empresa"
+              ) {
+                input.required = false;
+              } else {
+                input.required = true;
+              }
+            });
         } else {
-          document.getElementById('new-shipping-address').classList.remove('show');
-          document.getElementById('new-shipping-address').querySelectorAll('input, select').forEach(input => {
-            input.required = false;
-          });
+          document
+            .getElementById("new-shipping-address")
+            .classList.remove("show");
+          document
+            .getElementById("new-shipping-address")
+            .querySelectorAll("input, select")
+            .forEach((input) => {
+              input.required = false;
+            });
         }
       }
 
-      if (addressType === 'payment_address') {
-        if (selectedValue === 'new') {
-          document.getElementById('new-payment-address').classList.add('show');
-          document.getElementById('new-payment-address').querySelectorAll('input, select').forEach(input => {
-            if (input.id === 'save_payment' || input.id === 'payment_num_int' || input.id === 'payment_referencias') {            
-              input.required = false;
-            } else {
-              input.required = true;
-            }
-          });
+      if (addressType === "payment_address") {
+        if (selectedValue === "new") {
+          document.getElementById("new-payment-address").classList.add("show");
+          document
+            .getElementById("new-payment-address")
+            .querySelectorAll("input, select")
+            .forEach((input) => {
+              if (
+                input.id === "save_payment" ||
+                input.id === "payment_num_int" ||
+                input.id === "payment_referencias"
+              ) {
+                input.required = false;
+              } else {
+                input.required = true;
+              }
+            });
         } else {
-          document.getElementById('new-payment-address').classList.remove('show');
-          document.getElementById('new-payment-address').querySelectorAll('input, select').forEach(input => {
-            input.required = false;
-          });
+          document
+            .getElementById("new-payment-address")
+            .classList.remove("show");
+          document
+            .getElementById("new-payment-address")
+            .querySelectorAll("input, select")
+            .forEach((input) => {
+              input.required = false;
+            });
         }
       }
 
-      if (addressType === 'billing_info') {
-        if (selectedValue === 'new') {
-          document.getElementById('new-billing-info').classList.add('show');
-          document.getElementById('new-billing-info').querySelectorAll('input, select').forEach(input => {
-            if (input.id === 'save_billing') {
-              input.required = false;
-            } else {
-              input.required = true;
-            }
-          });
+      if (addressType === "billing_info") {
+        if (selectedValue === "new") {
+          document.getElementById("new-billing-info").classList.add("show");
+          document
+            .getElementById("new-billing-info")
+            .querySelectorAll("input, select")
+            .forEach((input) => {
+              if (input.id === "save_billing") {
+                input.required = false;
+              } else {
+                input.required = true;
+              }
+            });
         } else {
-          document.getElementById('new-billing-info').classList.remove('show');
-          document.getElementById('new-billing-info').querySelectorAll('input, select').forEach(input => {
-            input.required = false;
-          });
+          document.getElementById("new-billing-info").classList.remove("show");
+          document
+            .getElementById("new-billing-info")
+            .querySelectorAll("input, select")
+            .forEach((input) => {
+              input.required = false;
+            });
         }
       }
     }
 
-    sameAddressCheckbox.addEventListener('change', togglePaymentAddressFields);
-    needInvoiceCheckbox.addEventListener('change', toggleInvoiceFields);
-    selectAddressButtons.forEach(button => {
-      button.addEventListener('change', handleSelectAddress);
+    sameAddressCheckbox.addEventListener("change", togglePaymentAddressFields);
+    needInvoiceCheckbox.addEventListener("change", toggleInvoiceFields);
+    selectAddressButtons.forEach((button) => {
+      button.addEventListener("change", handleSelectAddress);
     });
 
     togglePaymentAddressFields();
@@ -388,6 +534,4 @@
   });
 </script>
 
-{% endblock %}
-
-{% include "footer.html" %}
+{% endblock %} {% include "footer.html" %}
