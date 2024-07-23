@@ -135,18 +135,3 @@ class CheckoutForm(FlaskForm):
     save_billing = BooleanField('Guardar para futuras compras')
 
     submit = SubmitField('Completar Compra')
-
-    def validate(self, **kwargs):
-        rv = super().validate(**kwargs)
-        if not rv:
-            return False
-
-        if self.need_invoice.data:
-            if not self.payment_rfc.data or not self.payment_razon_social.data or not self.payment_regimen_fiscal.data or not self.uso_cfdi.data or not self.cp_invoice.data:
-                return False
-        
-        if not self.same_address.data:
-            if not self.payment_nombre.data or not self.payment_apellidos.data or not self.payment_calle.data or not self.payment_numero.data or not self.payment_colonia.data or not self.payment_cp.data or not self.payment_ciudad.data or not self.payment_estado.data:
-                return False
-
-        return True

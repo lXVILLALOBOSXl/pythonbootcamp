@@ -266,9 +266,16 @@
     const needInvoiceCheckbox = document.querySelector('#need_invoice');
     const invoiceFields = document.querySelector('#invoice-fields');
     const selectAddressButtons = document.querySelectorAll('.select-address');
-    
-    for (let field of paymentAddressFields.querySelectorAll('input, select')) {
-      console.log(field);
+
+    // If there is no saved shipping addresses, fields are required by default
+    if (!document.querySelector('input[name="shipping_address"]:checked')) {
+      document.getElementById('new-shipping-address').querySelectorAll('input, select').forEach(input => {
+        if (input.id === 'save_shipping' || input.id === 'shipping_num_int' || input.id === 'shipping_referencias' || input.id === 'shipping_empresa') {
+              input.required = false;
+            } else {
+              input.required = true;
+            }
+      });
     }
 
     function togglePaymentAddressFields() {

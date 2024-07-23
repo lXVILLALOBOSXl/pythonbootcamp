@@ -137,13 +137,13 @@ def checkout():
     total = sum(item['price'] * item['quantity'] for item in cart)
     
     if form.validate_on_submit():
-        print('Form validated')
         shipping_address_id = request.form.get('shipping_address')
-        payment_address_id = request.form.get('payment_address')
+        payment_address_id =  request.form.get('payment_address')
         billing_info_id = request.form.get('billing_info')
 
-        # Procesar dirección de envío
-        if shipping_address_id == 'new':
+        
+
+        if form.save_shipping.data:
             shipping_address = ShippingAddress(
                 client_id=current_user.id,
                 nombre=form.shipping_nombre.data,
@@ -163,10 +163,9 @@ def checkout():
         else:
             shipping_address = ShippingAddress.query.get(shipping_address_id)
         
-        # Procesar dirección de facturación
         if form.same_address.data:
             payment_address = shipping_address
-        elif payment_address_id == 'new':
+        elif form.save_payment.data:
             payment_address = PaymentAddress(
                 client_id=current_user.id,
                 nombre=form.payment_nombre.data,
@@ -184,9 +183,8 @@ def checkout():
         else:
             payment_address = PaymentAddress.query.get(payment_address_id)
         
-        # Procesar información de facturación
         if form.need_invoice.data:
-            if billing_info_id == 'new':
+            if form.save_billing.data:
                 billing_info = Billing(
                     client_id=current_user.id,
                     rfc=form.payment_rfc.data,
