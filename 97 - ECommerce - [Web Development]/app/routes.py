@@ -119,9 +119,6 @@ def checkout():
 
     if not cart:
         return redirect(url_for('main.index'))
-    
-    if not current_user.is_authenticated:
-        return redirect(url_for('main.checkout_options', next=url_for('main.checkout')))
 
     if not current_user.is_verified:
         send_confirmation_email(current_user.email)
@@ -132,66 +129,86 @@ def checkout():
     payment_count = PaymentAddress.query.filter_by(client_id=current_user.id).count()
     billing_count = Billing.query.filter_by(client_id=current_user.id).count()
 
+    saved_shipping_addresses = ShippingAddress.query.filter_by(client_id=current_user.id).all()
+    saved_payment_addresses = PaymentAddress.query.filter_by(client_id=current_user.id).all()
+    saved_billing_info = Billing.query.filter_by(client_id=current_user.id).all()
+
     form = CheckoutForm()
     total = sum(item['price'] * item['quantity'] for item in cart)
     
     if form.validate_on_submit():
-        # Handle form submission, save addresses, and create order here
-        # Save shipping address if requested
-        # if form.save_shipping.data and shipping_count < 5:
-        #     shipping_address = ShippingAddress(
-        #         client_id=current_user.id,
-        #         nombre=form.shipping_nombre.data,
-        #         apellidos=form.shipping_apellidos.data,
-        #         celular=form.shipping_celular.data,
-        #         empresa=form.shipping_empresa.data,
-        #         calle=form.shipping_calle.data,
-        #         numero=form.shipping_numero.data,
-        #         num_int=form.shipping_num_int.data,
-        #         referencias=form.shipping_referencias.data,
-        #         colonia=form.shipping_colonia.data,
-        #         cp=form.shipping_cp.data,
-        #         ciudad=form.shipping_ciudad.data,
-        #         estado=form.shipping_estado.data
-        #     )
-        #     db.session.add(shipping_address)
+        print('Form validated')
+        shipping_address_id = request.form.get('shipping_address')
+        payment_address_id = request.form.get('payment_address')
+        billing_info_id = request.form.get('billing_info')
 
-        # Save payment address if requested
-        # if not form.same_address.data and form.save_payment.data and payment_count < 5:
-        #     payment_address = PaymentAddress(
-        #         client_id=current_user.id,
-        #         nombre=form.payment_nombre.data,
-        #         apellidos=form.payment_apellidos.data,
-        #         calle=form.payment_calle.data,
-        #         numero=form.payment_numero.data,
-        #         num_int=form.payment_num_int.data,
-        #         referencias=form.payment_referencias.data,
-        #         colonia=form.payment_colonia.data,
-        #         cp=form.payment_cp.data,
-        #         ciudad=form.payment_ciudad.data,
-        #         estado=form.payment_estado.data
-        #     )
-        #     db.session.add(payment_address)
-
-        # Save billing information if requested
-        # if form.need_invoice.data and form.save_billing.data and billing_count < 5:
-        #     billing_info = Billing(
-        #         client_id=current_user.id,
-        #         rfc=form.payment_rfc.data,
-        #         razon_social=form.payment_razon_social.data,
-        #         regimen_fiscal=form.payment_regimen_fiscal.data,
-        #         uso_cfdi=form.uso_cfdi.data
-        #     )
-        #     db.session.add(billing_info)
+        # Procesar dirección de envío
+        if shipping_address_id == 'new':
+            shipping_address = ShippingAddress(
+                client_id=current_user.id,
+                nombre=form.shipping_nombre.data,
+                apellidos=form.shipping_apellidos.data,
+                celular=form.shipping_celular.data,
+                empresa=form.shipping_empresa.data,
+                calle=form.shipping_calle.data,
+                numero=form.shipping_numero.data,
+                num_int=form.shipping_num_int.data,
+                referencias=form.shipping_referencias.data,
+                colonia=form.shipping_colonia.data,
+                cp=form.shipping_cp.data,
+                ciudad=form.shipping_ciudad.data,
+                estado=form.shipping_estado.data
+            )
+            db.session.add(shipping_address)
+        else:
+            shipping_address = ShippingAddress.query.get(shipping_address_id)
         
-        # db.session.commit()
+        # Procesar dirección de facturación
+        if form.same_address.data:
+            payment_address = shipping_address
+        elif payment_address_id == 'new':
+            payment_address = PaymentAddress(
+                client_id=current_user.id,
+                nombre=form.payment_nombre.data,
+                apellidos=form.payment_apellidos.data,
+                calle=form.payment_calle.data,
+                numero=form.payment_numero.data,
+                num_int=form.payment_num_int.data,
+                referencias=form.payment_referencias.data,
+                colonia=form.payment_colonia.data,
+                cp=form.payment_cp.data,
+                ciudad=form.payment_ciudad.data,
+                estado=form.payment_estado.data
+            )
+            db.session.add(payment_address)
+        else:
+            payment_address = PaymentAddress.query.get(payment_address_id)
+        
+        # Procesar información de facturación
+        if form.need_invoice.data:
+            if billing_info_id == 'new':
+                billing_info = Billing(
+                    client_id=current_user.id,
+                    rfc=form.payment_rfc.data,
+                    razon_social=form.payment_razon_social.data,
+                    regimen_fiscal=form.payment_regimen_fiscal.data,
+                    uso_cfdi=form.uso_cfdi.data,
+                    cp=form.cp_invoice.data
+                )
+                db.session.add(billing_info)
+            else:
+                billing_info = Billing.query.get(billing_info_id)
+
+        db.session.commit()
         flash('Compra completada con éxito.', 'success')
         return redirect(url_for('main.index'))
     elif request.method == 'POST':
         flash("Por favor completa los campos necesarios *", 'danger')
 
-    return render_template('checkout_form.html', form=form, cart=cart, total=total, shipping_count=shipping_count, payment_count=payment_count, billing_count=billing_count)
-
+    return render_template('checkout_form.html', form=form, cart=cart, total=total, 
+                           shipping_count=shipping_count, payment_count=payment_count, 
+                           billing_count=billing_count, saved_shipping_addresses=saved_shipping_addresses, 
+                           saved_payment_addresses=saved_payment_addresses, saved_billing_info=saved_billing_info)
 
 
 @main.route('/checkout_options')

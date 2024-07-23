@@ -31,19 +31,18 @@ class ResetPasswordForm(FlaskForm):
 
 
 class CheckoutForm(FlaskForm):
-    # Shipping Address
-    shipping_nombre = StringField('Nombre *', validators=[DataRequired(), Length(min=1, max=100)])
-    shipping_apellidos = StringField('Apellidos *', validators=[DataRequired(), Length(min=1, max=100)])
-    shipping_celular = StringField('Celular *', validators=[DataRequired(), Length(min=10, max=10)])
-    shipping_empresa = StringField('Empresa', validators=[Length(max=100)], default="")
-    shipping_calle = StringField('Calle *', validators=[DataRequired(), Length(min=1, max=100)])
-    shipping_numero = StringField('Número *', validators=[DataRequired(), Length(min=1, max=10)])
-    shipping_num_int = StringField('Número Interior', validators=[Length(max=10)], default="")
-    shipping_referencias = StringField('Referencias', validators=[Length(max=255)], default="")
-    shipping_colonia = StringField('Colonia *', validators=[DataRequired(), Length(min=1, max=100)])
-    shipping_cp = StringField('Código Postal *', validators=[DataRequired(), Length(min=5, max=5)])
-    shipping_ciudad = StringField('Ciudad *', validators=[DataRequired(), Length(min=1, max=100)])
-    shipping_estado = SelectField('Estado *', validators=[DataRequired()],
+    shipping_nombre = StringField('Nombre *', validators=[Optional(), Length(min=1, max=100)])
+    shipping_apellidos = StringField('Apellidos *', validators=[Optional(), Length(min=1, max=100)])
+    shipping_celular = StringField('Celular *', validators=[Optional(), Length(min=10, max=10)])
+    shipping_empresa = StringField('Empresa', validators=[Optional(), Length(max=100)], default="")
+    shipping_calle = StringField('Calle *', validators=[Optional(), Length(min=1, max=100)])
+    shipping_numero = StringField('Número *', validators=[Optional(), Length(min=1, max=10)])
+    shipping_num_int = StringField('Número Interior', validators=[Optional(), Length(max=10)], default="")
+    shipping_referencias = StringField('Referencias', validators=[Optional(), Length(max=255)], default="")
+    shipping_colonia = StringField('Colonia *', validators=[Optional(), Length(min=1, max=100)])
+    shipping_cp = StringField('Código Postal *', validators=[Optional(), Length(min=5, max=5)])
+    shipping_ciudad = StringField('Ciudad *', validators=[Optional(), Length(min=1, max=100)])
+    shipping_estado = SelectField('Estado *', validators=[Optional()],
                                  choices=[
                                      ('AGU', 'Aguascalientes'),
                                      ('BCN', 'Baja California Norte'),
@@ -80,8 +79,7 @@ class CheckoutForm(FlaskForm):
                                  ])
     save_shipping = BooleanField('Guardar para futuras compras')
 
-    # Payment Address
-    same_address = BooleanField('La dirección de facturación coincide con la dirección de envío')
+    same_address = BooleanField('La dirección de facturación coincide con la dirección de envío', default=True)
     payment_nombre = StringField('Nombre *', validators=[Optional(), Length(min=1, max=100)])
     payment_apellidos = StringField('Apellidos *', validators=[Optional(), Length(min=1, max=100)])
     payment_calle = StringField('Calle *', validators=[Optional(), Length(min=1, max=100)])
@@ -128,10 +126,10 @@ class CheckoutForm(FlaskForm):
                                  ])
     save_payment = BooleanField('Guardar para futuras compras')
 
-    # Invoice
     need_invoice = BooleanField('Necesito Factura')
     payment_rfc = StringField('RFC *', validators=[Optional(), Length(max=13)], default="")
     payment_razon_social = StringField('Razón Social o nombre *', validators=[Optional(), Length(max=100)], default="")
+    cp_invoice = StringField('Código Postal *', validators=[Optional(), Length(min=5, max=5)], default="")
     payment_regimen_fiscal = SelectField('Régimen Fiscal *', validators=[Optional()], choices=[('R1', 'Régimen 1'), ('R2', 'Régimen 2')], default="")
     uso_cfdi = SelectField('Uso CFDI *',validators=[Optional()], choices=[('U1', 'Uso 1'), ('U2', 'Uso 2')], default="")
     save_billing = BooleanField('Guardar para futuras compras')
@@ -144,7 +142,7 @@ class CheckoutForm(FlaskForm):
             return False
 
         if self.need_invoice.data:
-            if not self.payment_rfc.data or not self.payment_razon_social.data or not self.payment_regimen_fiscal.data or not self.uso_cfdi.data:
+            if not self.payment_rfc.data or not self.payment_razon_social.data or not self.payment_regimen_fiscal.data or not self.uso_cfdi.data or not self.cp_invoice.data:
                 return False
         
         if not self.same_address.data:
@@ -152,5 +150,3 @@ class CheckoutForm(FlaskForm):
                 return False
 
         return True
-
-

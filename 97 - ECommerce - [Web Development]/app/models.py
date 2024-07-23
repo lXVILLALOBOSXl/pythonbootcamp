@@ -58,6 +58,7 @@ class Billing(db.Model):
     razon_social = db.Column(db.String(100), nullable=False)
     regimen_fiscal = db.Column(db.String(100), nullable=False)
     uso_cfdi = db.Column(db.String(100), nullable=False)
+    cp = db.Column(db.String(5), nullable=False)
 
     def __repr__(self):
         return f'<Billing {self.rfc}>'
@@ -110,6 +111,8 @@ class Order(db.Model):
     status = db.Column(db.String(50), nullable=False, default='Pending')
     shipping_address_id = db.Column(db.Integer, db.ForeignKey('shipping_address.id'), nullable=False)
     payment_address_id = db.Column(db.Integer, db.ForeignKey('payment_address.id'), nullable=False)
+    forma_de_pago = db.Column(db.String(100), nullable=False)
+    metodo_de_pago = db.Column(db.String(100), nullable=False)
     shipping_address = db.relationship('ShippingAddress', backref='orders')
     payment_address = db.relationship('PaymentAddress', backref='orders')
     order_items = db.relationship('OrderItem', backref='order', lazy=True)
