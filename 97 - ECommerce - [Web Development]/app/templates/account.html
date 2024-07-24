@@ -10,22 +10,40 @@
     <div class="col-md-6">
       <h4>Direcciones de Envío</h4>
       {% for address in shipping_addresses %}
-      <p><strong>Nombre:</strong> {{ address.nombre }}</p>
-      <p><strong>Calle:</strong> {{ address.calle }}</p>
-      <p><strong>Colonia:</strong> {{ address.colonia }}</p>
-      <p><strong>Municipio:</strong> {{ address.municipio }}</p>
-      <p><strong>Número:</strong> {{ address.numero }}</p>
+      <p>
+        <strong>Nombre:</strong> {{ address.nombre }} {{ address.apellidos }}
+      </p>
+      <p><strong>Celular:</strong> {{ address.celular }}</p>
+      <p>
+        <strong>Direccion:</strong> {{ address.calle }} {{ address.numero }}, {{
+        address.colonia }}, {{ address.ciudad }}, {{ address.estado }}, {{
+        address.cp }}
+      </p>
       <hr />
       {% endfor %}
     </div>
     <div class="col-md-6">
       <h4>Direcciones de Pago</h4>
       {% for address in payment_addresses %}
-      <p><strong>Nombre:</strong> {{ address.nombre }}</p>
-      <p><strong>Calle:</strong> {{ address.calle }}</p>
-      <p><strong>Colonia:</strong> {{ address.colonia }}</p>
-      <p><strong>Municipio:</strong> {{ address.municipio }}</p>
-      <p><strong>Número:</strong> {{ address.numero }}</p>
+      <p>
+        <strong>Nombre:</strong> {{ address.nombre }} {{ address.apellidos }}
+      </p>
+      <p>
+        <strong>Direccion:</strong> {{ address.calle }} {{ address.numero }}, {{
+        address.colonia }}, {{ address.ciudad }}, {{ address.estado }}, {{
+        address.cp }}
+      </p>
+      <hr />
+      {% endfor %}
+    </div>
+    <div class="col-md-6">
+      <h4>Información de Facturación</h4>
+      {% for billing in billing_info %}
+      <p><strong>RFC:</strong> {{ billing.rfc }}</p>
+      <p><strong>Razón Social:</strong> {{ billing.razon_social }}</p>
+      <p><strong>Régimen Fiscal:</strong> {{ billing.regimen_fiscal }}</p>
+      <p><strong>Uso CFDI:</strong> {{ billing.uso_cfdi }}</p>
+      <p><strong>Código Postal:</strong> {{ billing.cp }}</p>
       <hr />
       {% endfor %}
     </div>
@@ -35,7 +53,28 @@
       <p><strong>Orden ID:</strong> {{ order.id }}</p>
       <p><strong>Fecha de Pedido:</strong> {{ order.date_ordered }}</p>
       <p><strong>Monto Total:</strong> MX${{ order.total_amount }}</p>
-      <h5>Items de la Orden:</h5>
+      <p><strong>Estado de la Orden:</strong> {{ order.status }}</p>
+      <p>
+        <strong>Enviado a:</strong> {{ order.shipping_address.nombre }} {{
+        order.shipping_address.apellidos }}, {{ order.shipping_address.calle }},
+        {{ order.shipping_address.numero }}, {{ order.shipping_address.colonia
+        }}, {{ order.shipping_address.ciudad }}, {{
+        order.shipping_address.estado }}, {{ order.shipping_address.cp }}
+      </p>
+      <p>
+        <strong>Direccion de pago:</strong> {{ order.payment_address.nombre }}
+        {{ order.payment_address.apellidos }}, {{ order.payment_address.calle
+        }}, {{ order.payment_address.numero }}, {{ order.payment_address.colonia
+        }}, {{ order.payment_address.ciudad }}, {{ order.payment_address.estado
+        }}, {{ order.payment_address.cp }}
+      </p>
+      {% if order.billing %}
+      <p>
+        <strong>Facturado a:</strong> {{ order.billing.razon_social }}, {{
+        order.billing.rfc }}, {{ order.billing.cp }} {{ order.billing.uso_cfdi
+        }}
+      </p>
+      {% endif %}
       <ul>
         {% for item in order.order_items %}
         <li>

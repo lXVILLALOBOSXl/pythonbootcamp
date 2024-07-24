@@ -77,7 +77,6 @@ class CheckoutForm(FlaskForm):
                                      ('YUC', 'Yucatán'),
                                      ('ZAC', 'Zacatecas')
                                  ])
-    save_shipping = BooleanField('Guardar para futuras compras')
 
     same_address = BooleanField('La dirección de facturación coincide con la dirección de envío', default=True)
     payment_nombre = StringField('Nombre *', validators=[Optional(), Length(min=1, max=100)])
@@ -124,7 +123,6 @@ class CheckoutForm(FlaskForm):
                                      ('YUC', 'Yucatán'),
                                      ('ZAC', 'Zacatecas')
                                  ])
-    save_payment = BooleanField('Guardar para futuras compras')
 
     need_invoice = BooleanField('Necesito Factura')
     payment_rfc = StringField('RFC *', validators=[Optional(), Length(max=13)], default="")
@@ -132,6 +130,5 @@ class CheckoutForm(FlaskForm):
     cp_invoice = StringField('Código Postal *', validators=[Optional(), Length(min=5, max=5)], default="")
     payment_regimen_fiscal = SelectField('Régimen Fiscal *', validators=[Optional()], choices=[('R1', 'Régimen 1'), ('R2', 'Régimen 2')], default="")
     uso_cfdi = SelectField('Uso CFDI *',validators=[Optional()], choices=[('U1', 'Uso 1'), ('U2', 'Uso 2')], default="")
-    save_billing = BooleanField('Guardar para futuras compras')
 
     submit = SubmitField('Completar Compra')

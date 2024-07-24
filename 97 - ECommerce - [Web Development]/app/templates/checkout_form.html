@@ -65,15 +65,26 @@
         />
         <label for="shipping_address_{{ address.id }}" class="form-check-label">
           <p>{{ address.nombre }} {{ address.apellidos }}</p>
-          <p>{{ address.calle }} {{ address.numero }} {{ address.num_int }}</p>
+          <p>{{ address.celular }}</p>
           <p>
-            {{ address.colonia }}, {{ address.ciudad }}, {{ address.estado }} {{
+            {{ address.calle }} {{ address.numero }} {{ address.num_int }}, {{
+            address.colonia }}, {{ address.ciudad }}, {{ address.estado }} {{
             address.cp }}
           </p>
         </label>
+        <!-- Add a delete or edit button here -->
+        <div class="d-flex justify-content-end mt-2">
+          <a class="btn btn-primary btn-sm me-2">Editar</a>
+          <a
+            href="{{ url_for('main.delete_address', id=address.id, next=request.path) }}"
+            class="btn btn-danger btn-sm"
+            >Eliminar</a
+          >
+        </div>
       </div>
       {% set first = False %} {% endfor %}
     </div>
+    {% if saved_shipping_addresses|length < 5 %}
     <div class="form-check mb-3">
       <input
         type="radio"
@@ -87,6 +98,10 @@
       >
     </div>
     {% else %}
+    <label class="form-check-label" for="add_new_shipping"
+      >Elimina una dirección existente para agregar una nueva</label
+    >
+    {% endif %} {% else %}
     <input type="hidden" name="shipping_address" value="new" />
     {% endif %}
     <div
@@ -143,10 +158,6 @@
         {{ form.shipping_estado.label(class="form-label") }} {{
         form.shipping_estado(class="form-control", id="shipping_estado") }}
       </div>
-      <div class="form-group mt-3">
-        {{ form.save_shipping(class="form-check-input", id="save_shipping") }}
-        {{ form.save_shipping.label(class="form-check-label") }}
-      </div>
     </div>
 
     <!-- Payment Address Section -->
@@ -155,6 +166,7 @@
       {{ form.same_address(class="form-check-input", id="same_address") }} {{
       form.same_address.label(class="form-check-label") }}
     </div>
+    <p></p>
     <div
       id="payment-address-fields"
       class="{% if form.same_address.data %}d-none{% endif %}"
@@ -183,16 +195,23 @@
           >
             <p>{{ address.nombre }} {{ address.apellidos }}</p>
             <p>
-              {{ address.calle }} {{ address.numero }} {{ address.num_int }}
-            </p>
-            <p>
-              {{ address.colonia }}, {{ address.ciudad }}, {{ address.estado }}
-              {{ address.cp }}
+              {{ address.calle }} {{ address.numero }} {{ address.num_int }}, {{
+              address.colonia }}, {{ address.ciudad }}, {{ address.estado }} {{
+              address.cp }}
             </p>
           </label>
+          <div class="d-flex justify-content-end mt-2">
+            <a class="btn btn-primary btn-sm me-2">Editar</a>
+            <a
+              href="{{ url_for('main.delete_payment', id=address.id, next=request.path) }}"
+              class="btn btn-danger btn-sm"
+              >Eliminar</a
+            >
+          </div>
         </div>
         {% set first_payment = False %} {% endfor %}
       </div>
+      {% if saved_payment_addresses|length < 5 %}
       <div class="form-check mb-3">
         <input
           type="radio"
@@ -206,6 +225,10 @@
         >
       </div>
       {% else %}
+      <label class="form-check-label" for="add_new_shipping"
+        >Elimina una dirección existente para agregar una nueva</label
+      >
+      {% endif %} {% else %}
       <input type="hidden" name="payment_address" value="new" />
       {% endif %}
       <div
@@ -254,10 +277,6 @@
           {{ form.payment_estado.label(class="form-label") }} {{
           form.payment_estado(class="form-control", id="payment_estado") }}
         </div>
-        <div class="form-group mt-3">
-          {{ form.save_payment(class="form-check-input", id="save_payment") }}
-          {{ form.save_payment.label(class="form-check-label") }}
-        </div>
       </div>
     </div>
 
@@ -267,6 +286,7 @@
       {{ form.need_invoice(class="form-check-input", id="need_invoice") }} {{
       form.need_invoice.label(class="form-check-label") }}
     </div>
+    <p></p>
     <div
       id="invoice-fields"
       class="{% if not form.need_invoice.data %}d-none{% endif %}"
@@ -291,10 +311,20 @@
           <label for="billing_info_{{ billing.id }}" class="form-check-label">
             <p>{{ billing.rfc }}</p>
             <p>{{ billing.razon_social }}</p>
+            <p>{{ billing.uso_cfdi }}</p>
           </label>
+          <div class="d-flex justify-content-end mt-2">
+            <a class="btn btn-primary btn-sm me-2">Editar</a>
+            <a
+              href="{{ url_for('main.delete_billing', id=billing.id, next=request.path) }}"
+              class="btn btn-danger btn-sm"
+              >Eliminar</a
+            >
+          </div>
         </div>
         {% set first_billing = False %} {% endfor %}
       </div>
+      {% if saved_billing_info|length < 5 %}
       <div class="form-check mb-3">
         <input
           type="radio"
@@ -308,6 +338,10 @@
         >
       </div>
       {% else %}
+      <label class="form-check-label" for="add_new_shipping"
+        >Elimina una dirección existente para agregar una nueva</label
+      >
+      {% endif %} {% else %}
       <input type="hidden" name="billing_info" value="new" />
       {% endif %}
       <div
@@ -336,10 +370,6 @@
           {{ form.uso_cfdi.label(class="form-label") }} {{
           form.uso_cfdi(class="form-control", id="uso_cfdi") }}
         </div>
-        <div class="form-group mt-3">
-          {{ form.save_billing(class="form-check-input", id="save_billing") }}
-          {{ form.save_billing.label(class="form-check-label") }}
-        </div>
       </div>
     </div>
 
@@ -366,7 +396,6 @@
         .querySelectorAll("input, select")
         .forEach((input) => {
           if (
-            input.id === "save_shipping" ||
             input.id === "shipping_num_int" ||
             input.id === "shipping_referencias" ||
             input.id === "shipping_empresa"
@@ -398,7 +427,6 @@
           .querySelectorAll("input, select")
           .forEach((input) => {
             if (
-              input.id !== "save_payment" &&
               input.id !== "payment_num_int" &&
               input.id !== "payment_referencias"
             ) {
@@ -419,9 +447,7 @@
           .getElementById("new-billing-info")
           .querySelectorAll("input, select")
           .forEach((input) => {
-            if (input.id !== "save_billing") {
-              input.required = true;
-            }
+            input.required = true;
           });
       } else {
         invoiceFields.classList.add("d-none");
@@ -445,7 +471,6 @@
             .querySelectorAll("input, select")
             .forEach((input) => {
               if (
-                input.id === "save_shipping" ||
                 input.id === "shipping_num_int" ||
                 input.id === "shipping_referencias" ||
                 input.id === "shipping_empresa"
@@ -476,7 +501,6 @@
             .querySelectorAll("input, select")
             .forEach((input) => {
               if (
-                input.id === "save_payment" ||
                 input.id === "payment_num_int" ||
                 input.id === "payment_referencias"
               ) {
@@ -505,11 +529,7 @@
             .getElementById("new-billing-info")
             .querySelectorAll("input, select")
             .forEach((input) => {
-              if (input.id === "save_billing") {
-                input.required = false;
-              } else {
-                input.required = true;
-              }
+              input.required = true;
             });
         } else {
           document.getElementById("new-billing-info").classList.remove("show");

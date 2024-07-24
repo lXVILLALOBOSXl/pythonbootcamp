@@ -5,6 +5,7 @@ from flask_login import login_user, current_user, logout_user, login_required
 from werkzeug.security import check_password_hash, generate_password_hash
 from . import db
 from .utils import send_confirmation_email, send_reset_email, confirm_token, send_guest_confirmation_email
+from sqlalchemy.orm import joinedload
 import datetime
 
 
@@ -93,19 +94,17 @@ def register():
 
     return render_template('register.html', logged_in=current_user.is_authenticated, form=form, next=next_page)
 
-
-
-
-
 @main.route('/account')
 @login_required
 def account():
     user = current_user
-    shipping_addresses = ShippingAddress.query.filter_by(client_id=user.id).all()
-    payment_addresses = PaymentAddress.query.filter_by(client_id=user.id).all()
-    orders = Order.query.filter_by(client_id=user.id).all()
-    return render_template('account.html', user=user, shipping_addresses=shipping_addresses, payment_addresses=payment_addresses, orders=orders)
-
+    shipping_addresses = ShippingAddress.query.filter_by(client_id=current_user.id, is_deleted=False).all()
+    payment_addresses = PaymentAddress.query.filter_by(client_id=user.id, is_deleted=False).all()
+    billing_info = Billing.query.filter_by(client_id=user.id, is_deleted=False).all()
+    orders = Order.query.filter_by(client_id=user.id).options(
+        joinedload(Order.order_items).joinedload(OrderItem.product)
+    ).all()
+    return render_template('account.html', user=user, shipping_addresses=shipping_addresses, payment_addresses=payment_addresses, orders=orders, billing_info=billing_info)
 
 @main.route('/logout')
 def logout():
@@ -133,9 +132,9 @@ def checkout():
     payment_count = PaymentAddress.query.filter_by(client_id=current_user.id).count()
     billing_count = Billing.query.filter_by(client_id=current_user.id).count()
 
-    saved_shipping_addresses = ShippingAddress.query.filter_by(client_id=current_user.id).all()
-    saved_payment_addresses = PaymentAddress.query.filter_by(client_id=current_user.id).all()
-    saved_billing_info = Billing.query.filter_by(client_id=current_user.id).all()
+    saved_shipping_addresses = ShippingAddress.query.filter_by(client_id=current_user.id, is_deleted=False).all()
+    saved_payment_addresses = PaymentAddress.query.filter_by(client_id=current_user.id, is_deleted=False).all()
+    saved_billing_info = Billing.query.filter_by(client_id=current_user.id, is_deleted=False).all()
 
     form = CheckoutForm()
     total = sum(item['price'] * item['quantity'] for item in cart)
@@ -162,13 +161,31 @@ def checkout():
                 ciudad=form.shipping_ciudad.data,
                 estado=form.shipping_estado.data
             )
-            if form.save_shipping.data:
-                db.session.add(shipping_address)
+            db.session.add(shipping_address)
+            db.session.flush()
         else:
             shipping_address = ShippingAddress.query.get(shipping_address_id)
         
         if form.same_address.data:
-            payment_address = shipping_address
+            # If the shipping address is already saved in payment address, don't save it again
+            if PaymentAddress.query.filter_by(client_id=current_user.id, nombre=shipping_address.nombre, apellidos=shipping_address.apellidos, calle=shipping_address.calle, numero=shipping_address.numero, num_int=shipping_address.num_int, referencias=shipping_address.referencias, colonia=shipping_address.colonia, cp=shipping_address.cp, ciudad=shipping_address.ciudad, estado=shipping_address.estado).first():
+                payment_address = PaymentAddress.query.filter_by(client_id=current_user.id, nombre=shipping_address.nombre, apellidos=shipping_address.apellidos, calle=shipping_address.calle, numero=shipping_address.numero, num_int=shipping_address.num_int, referencias=shipping_address.referencias, colonia=shipping_address.colonia, cp=shipping_address.cp, ciudad=shipping_address.ciudad, estado=shipping_address.estado).first()
+            else:
+                payment_address = PaymentAddress(
+                    client_id=current_user.id,
+                    nombre=shipping_address.nombre,
+                    apellidos=shipping_address.apellidos,
+                    calle=shipping_address.calle,
+                    numero=shipping_address.numero,
+                    num_int=shipping_address.num_int,
+                    referencias=shipping_address.referencias,
+                    colonia=shipping_address.colonia,
+                    cp = shipping_address.cp,
+                    ciudad=shipping_address.ciudad,
+                    estado=shipping_address.estado
+                )
+                db.session.add(payment_address)
+                db.session.flush()
         elif payment_address_id == 'new':
             payment_address = PaymentAddress(
                 client_id=current_user.id,
@@ -183,8 +200,8 @@ def checkout():
                 ciudad=form.payment_ciudad.data,
                 estado=form.payment_estado.data
             )
-            if form.save_payment.data:
-                db.session.add(payment_address)
+            db.session.add(payment_address)
+            db.session.flush()
         else:
             payment_address = PaymentAddress.query.get(payment_address_id)
         
@@ -198,17 +215,18 @@ def checkout():
                     uso_cfdi=form.uso_cfdi.data,
                     cp=form.cp_invoice.data
                 )
-                if form.save_billing.data:
-                    db.session.add(billing_info)
+                db.session.add(billing_info)
+                db.session.flush()
             else:
                 billing_info = Billing.query.get(billing_info_id)
         else:
             billing_info = None
 
+
         order = Order(
             client_id=current_user.id,
             total_amount=total,
-            uso_cfdi=form.uso_cfdi.data if form.need_invoice.data else None,
+            billing_id = billing_info.id if billing_info else None,
             shipping_address_id=shipping_address.id,
             payment_address_id=payment_address.id,
             forma_de_pago="",
@@ -225,7 +243,13 @@ def checkout():
                 price=item['price']
             )
             db.session.add(order_item)
-    
+            #update stock
+            product = Product.query.get(item['id'])
+            product.units_in_stock -= item['quantity']
+            db.session.add(product)
+
+        # Clear the cart
+        session['cart'] = []
 
         db.session.commit()
         flash('Compra completada con éxito.', 'success')
@@ -237,6 +261,70 @@ def checkout():
                            shipping_count=shipping_count, payment_count=payment_count, 
                            billing_count=billing_count, saved_shipping_addresses=saved_shipping_addresses, 
                            saved_payment_addresses=saved_payment_addresses, saved_billing_info=saved_billing_info)
+
+
+@main.route('/delete_address/<int:id>', methods=['GET', 'POST'])
+def delete_address(id):
+    if not current_user.is_authenticated:
+        return redirect(url_for('main.index'))
+    address = ShippingAddress.query.get_or_404(id)
+    if address.client_id != current_user.id:
+        return redirect(url_for('main.index'))
+
+    # Marcar la dirección como eliminada
+    address.is_deleted = True
+    db.session.add(address)
+    db.session.commit()
+
+    flash('Dirección eliminada exitosamente.', 'success')
+    
+    next_page = request.args.get('next')
+    if not next_page:
+        next_page = url_for('main.account')
+    
+    return redirect(next_page)
+
+@main.route('/delete_payment/<int:id>', methods=['GET', 'POST'])
+def delete_payment(id):
+    if not current_user.is_authenticated:
+        return redirect(url_for('main.index'))
+    address = PaymentAddress.query.get_or_404(id)
+    if address.client_id != current_user.id:
+        return redirect(url_for('main.index'))
+
+    # Marcar la dirección como eliminada
+    address.is_deleted = True
+    db.session.add(address)
+    db.session.commit()
+
+    flash('Dirección eliminada exitosamente.', 'success')
+    
+    next_page = request.args.get('next')
+    if not next_page:
+        next_page = url_for('main.account')
+    
+    return redirect(next_page)
+
+@main.route('/delete_billing/<int:id>', methods=['GET', 'POST'])
+def delete_billing(id):
+    if not current_user.is_authenticated:
+        return redirect(url_for('main.index'))
+    address = Billing.query.get_or_404(id)
+    if address.client_id != current_user.id:
+        return redirect(url_for('main.index'))
+
+    # Marcar la dirección como eliminada
+    address.is_deleted = True
+    db.session.add(address)
+    db.session.commit()
+
+    flash('Información de facturación eliminada exitosamente.', 'success')
+    
+    next_page = request.args.get('next')
+    if not next_page:
+        next_page = url_for('main.account')
+    
+    return redirect(next_page)
 
 
 @main.route('/checkout_options')
