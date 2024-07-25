@@ -13,6 +13,7 @@ bootstrap = Bootstrap()
 login_manager = LoginManager()
 mail = Mail()
 
+
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
@@ -22,10 +23,13 @@ def create_app():
     bootstrap.init_app(app)
     login_manager.init_app(app)
     mail.init_app(app)
-    login_manager.login_view = 'main.login'  # Adjust according to your blueprint and route structure
+    login_manager.login_view = (
+        "main.login"  # Adjust according to your blueprint and route structure
+    )
 
     with app.app_context():
         from . import routes, models
+
         app.register_blueprint(routes.main)
         db.create_all()
 

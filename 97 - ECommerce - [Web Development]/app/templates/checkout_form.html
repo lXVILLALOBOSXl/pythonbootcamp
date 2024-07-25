@@ -74,7 +74,11 @@
         </label>
         <!-- Add a delete or edit button here -->
         <div class="d-flex justify-content-end mt-2">
-          <a class="btn btn-primary btn-sm me-2">Editar</a>
+          <a
+            href="{{ url_for('main.edit_address', id=address.id, next=request.path) }}"
+            class="btn btn-primary btn-sm me-2"
+            >Editar</a
+          >
           <a
             href="{{ url_for('main.delete_address', id=address.id, next=request.path) }}"
             class="btn btn-danger btn-sm"
@@ -201,7 +205,11 @@
             </p>
           </label>
           <div class="d-flex justify-content-end mt-2">
-            <a class="btn btn-primary btn-sm me-2">Editar</a>
+            <a
+              href="{{ url_for('main.edit_payment', id=address.id, next=request.path) }}"
+              class="btn btn-primary btn-sm me-2"
+              >Editar</a
+            >
             <a
               href="{{ url_for('main.delete_payment', id=address.id, next=request.path) }}"
               class="btn btn-danger btn-sm"
@@ -314,7 +322,11 @@
             <p>{{ billing.uso_cfdi }}</p>
           </label>
           <div class="d-flex justify-content-end mt-2">
-            <a class="btn btn-primary btn-sm me-2">Editar</a>
+            <a
+              href="{{ url_for('main.edit_billing', id=billing.id, next=request.path) }}"
+              class="btn btn-primary btn-sm me-2"
+              >Editar</a
+            >
             <a
               href="{{ url_for('main.delete_billing', id=billing.id, next=request.path) }}"
               class="btn btn-danger btn-sm"

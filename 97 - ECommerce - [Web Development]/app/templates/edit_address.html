@@ -1,0 +1,65 @@
+{% include "header.html" %} {% block content %}
+<main class="mb-4">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-md-10 mx-auto">
+        <h4>Editar dirección de envío</h4>
+        <form method="POST">
+          {{ form.hidden_tag() }}
+          <div class="form-group">
+            {{ form.nombre.label(class="form-label") }} {{
+            form.nombre(class="form-control", id="nombre") }}
+          </div>
+          <div class="form-group mt-3">
+            {{ form.apellidos.label(class="form-label") }} {{
+            form.apellidos(class="form-control", id="apellidos") }}
+          </div>
+          <div class="form-group mt-3">
+            {{ form.celular.label(class="form-label") }} {{
+            form.celular(class="form-control", id="celular") }}
+          </div>
+          <div class="form-group mt-3">
+            {{ form.empresa.label(class="form-label") }} {{
+            form.empresa(class="form-control", id="empresa") }}
+          </div>
+          <div class="form-group mt-3">
+            {{ form.calle.label(class="form-label") }} {{
+            form.calle(class="form-control", id="calle") }}
+          </div>
+          <div class="form-group mt-3">
+            {{ form.numero.label(class="form-label") }} {{
+            form.numero(class="form-control", id="numero") }}
+          </div>
+          <div class="form-group mt-3">
+            {{ form.num_int.label(class="form-label") }} {{
+            form.num_int(class="form-control", id="num_int") }}
+          </div>
+          <div class="form-group mt-3">
+            {{ form.referencias.label(class="form-label") }} {{
+            form.referencias(class="form-control", id="referencias") }}
+          </div>
+          <div class="form-group mt-3">
+            {{ form.colonia.label(class="form-label") }} {{
+            form.colonia(class="form-control", id="colonia") }}
+          </div>
+          <div class="form-group mt-3">
+            {{ form.cp.label(class="form-label") }} {{
+            form.cp(class="form-control", id="cp") }}
+          </div>
+          <div class="form-group mt-3">
+            {{ form.ciudad.label(class="form-label") }} {{
+            form.ciudad(class="form-control", id="ciudad") }}
+          </div>
+          <div class="form-group mt-3">
+            {{ form.estado.label(class="form-label") }} {{
+            form.estado(class="form-control", id="estado") }}
+          </div>
+          <div class="form-group mt-4">
+            {{ form.submit(class="btn btn-primary", type="submit") }}
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</main>
+{% endblock %} {% include "footer.html" %}
