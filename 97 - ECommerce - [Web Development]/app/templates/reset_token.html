@@ -12,13 +12,28 @@
             action="{{ url_for('main.reset_with_token', token=token) }}"
           >
             {{ form.hidden_tag() }}
+
             <div class="form-group">
               {{ form.password.label(class="form-label") }} {{
               form.password(class="form-control") }}
             </div>
             <div class="form-group mt-3">
+              <label
+                >Tu contraseña debe tener al menos 8 caracteres, al menos una
+                letra mayúscula, una letra minúscula, un número y un carácter
+                especial (@ $ ! . ? -).
+              </label>
+            </div>
+            <div class="form-group mt-3">
               {{ form.confirm_password.label(class="form-label") }} {{
-              form.confirm_password(class="form-control") }}
+              form.confirm_password(class="form-control") }} {% if
+              form.confirm_password.errors %}
+              <div class="text-danger">
+                {% for error in form.confirm_password.errors %}
+                <p>{{ error }}</p>
+                {% endfor %}
+              </div>
+              {% endif %}
             </div>
             <div class="form-group mt-4">{{ form.submit() }}</div>
           </form>

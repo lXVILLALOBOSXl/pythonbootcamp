@@ -7,7 +7,7 @@ from wtforms import (
     BooleanField,
     SelectField,
 )
-from wtforms.validators import DataRequired, Email, Length, EqualTo, Optional
+from wtforms.validators import DataRequired, Email, Length, EqualTo, Optional, Regexp
 
 
 choices = [
@@ -62,12 +62,12 @@ class LoginForm(FlaskForm):
 
 
 class RegisterForm(FlaskForm):
-    name = StringField("Nombre", validators=[DataRequired(), Length(min=2, max=100)])
-    email = StringField("Correo Electrónico", validators=[DataRequired(), Email()])
-    phone = StringField("Celular", validators=[DataRequired(), Length(min=10, max=10)])
-    password = PasswordField("Contraseña", validators=[DataRequired(), Length(min=6)])
+    name = StringField("Nombre *", validators=[DataRequired(), Length(min=2, max=100)])
+    email = StringField("Correo Electrónico *", validators=[DataRequired(), Email()])
+    phone = StringField("Celular *", validators=[DataRequired(), Length(min=10, max=10)], render_kw={"pattern": "[0-9]{10}", "title": "Verifica el número celular"})
+    password = PasswordField("Contraseña *", validators=[DataRequired(), Length(min=8)], render_kw={"pattern": "^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!.?-])[A-Za-z\d@$!.?-]{8,}$"})
     confirm_password = PasswordField(
-        "Confirmar Contraseña", validators=[DataRequired(), EqualTo("password")]
+        "Confirmar Contraseña *", validators=[DataRequired(), EqualTo("password")]
     )
     submit = SubmitField(
         "Crear cuenta", render_kw={"class": "btn btn-success btn-block"}
@@ -83,7 +83,7 @@ class RequestResetForm(FlaskForm):
 
 class ResetPasswordForm(FlaskForm):
     password = PasswordField(
-        "Nueva Contraseña", validators=[DataRequired(), Length(min=6)]
+        "Nueva Contraseña", validators=[DataRequired(), Length(min=8)], render_kw={"pattern": "^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!.?-])[A-Za-z\d@$!.?-]{8,}$"}
     )
     confirm_password = PasswordField(
         "Confirmar Nueva Contraseña", validators=[DataRequired(), EqualTo("password")]
@@ -101,7 +101,7 @@ class CheckoutForm(FlaskForm):
         "Apellidos *", validators=[Optional(), Length(min=1, max=100)]
     )
     shipping_celular = StringField(
-        "Celular *", validators=[Optional(), Length(min=10, max=10)]
+        "Celular *", validators=[Optional(), Length(min=10, max=10)], render_kw={"pattern": "[0-9]{10}", "title": "Verifica el número celular"}
     )
     shipping_empresa = StringField(
         "Empresa", validators=[Optional(), Length(max=100)], default=""
@@ -192,7 +192,7 @@ class ShippingAddressForm(FlaskForm):
     apellidos = StringField(
         "Apellidos *", validators=[DataRequired(), Length(min=1, max=100)]
     )
-    celular = StringField("Celular *", validators=[DataRequired(), Length(min=10, max=10)])
+    celular = StringField("Celular *", validators=[DataRequired(), Length(min=10, max=10)],render_kw={"pattern": "[0-9]{10}", "title": "Verifica el número celular"})
     empresa = StringField(
         "Empresa", validators=[Optional(), Length(max=100)], default=""
     )
@@ -256,11 +256,11 @@ class BillingForm(FlaskForm):
 class AccountConfigForm(FlaskForm):
     name = StringField('Nombre', validators=[DataRequired()])
     email = StringField('Correo Electrónico', validators=[DataRequired(), Email()])
-    phone = StringField('Celular', validators=[DataRequired(), Length(min=10, max=10)])
-    password = PasswordField('Contraseña anterior', validators=[DataRequired()])
-    new_password = PasswordField('Nueva Contraseña', validators=[Optional()])
+    phone = StringField('Celular', validators=[DataRequired(), Length(min=10, max=10)],render_kw={"pattern": "[0-9]{10}", "title": "Verifica el número celular"}) 
+    actual_password = PasswordField('Contraseña actual', validators=[DataRequired()])
+    password = PasswordField('Nueva Contraseña', validators=[Optional(), Length(min=8)], render_kw={"pattern": "^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!.?-])[A-Za-z\d@$!.?-]{8,}$"})
     confirm_password = PasswordField('Confirmar Contraseña', validators=[
         Optional(),
-        EqualTo('new_password', message='Las contraseñas deben coincidir')
+        EqualTo('password')
     ])
     submit = SubmitField('Actualizar') 

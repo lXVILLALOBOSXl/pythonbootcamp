@@ -124,6 +124,7 @@ def register():
         )
         new_user = Client(
             email=form.email.data,
+            phone=form.phone.data,
             password_hash=hash_and_salted_password,
             name=form.name.data,
             is_verified=False,
@@ -173,15 +174,15 @@ def account():
     form = AccountConfigForm(obj=current_user)
 
     if form.validate_on_submit():
-        if check_password_hash(user.password_hash, form.password.data):
+        if check_password_hash(user.password_hash, form.actual_password.data):
             user.name = form.name.data
             if user.email != form.email.data:
                 user.email = form.email.data
                 user.is_verified = False
             user.phone = form.phone.data
-            if form.new_password.data:
+            if form.password.data:
                 user.password_hash = generate_password_hash(
-                    form.new_password.data, method="pbkdf2:sha256", salt_length=8
+                    form.password.data, method="pbkdf2:sha256", salt_length=8
                 )
             db.session.commit()
             flash("Tu cuenta ha sido actualizada", "success")
