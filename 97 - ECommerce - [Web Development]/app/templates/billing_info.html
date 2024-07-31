@@ -1,0 +1,106 @@
+{% include "header.html" %} {% block content %}
+<div class="container mt-5">
+  <h2 class="mt-3">Información de facturación</h2>
+  <form method="POST" action="{{ url_for('main.billing_info') }}">
+    {{ form.hidden_tag() }}
+    <div class="saved-billing-info mb-3">
+      {% for billing in saved_billing_info %}
+      <div class="billing-item p-3 mb-3 border rounded">
+        <label class="form-check-label">
+          <p><strong>RFC:</strong> {{ billing.rfc }}</p>
+          <p><strong>Razón Social:</strong> {{ billing.razon_social }}</p>
+          <p><strong>Código Postal:</strong> {{ billing.cp }}</p>
+          <p><strong>Régimen Fiscal:</strong> {{ billing.regimen_fiscal }}</p>
+          <p><strong>Uso CFDI:</strong> {{ billing.uso_cfdi }}</p>
+        </label>
+        <div class="d-flex justify-content-end mt-2">
+          <a
+            href="{{ url_for('main.edit_billing', id=billing.id, next=request.path) }}"
+            class="btn btn-primary btn-sm me-2"
+            >Editar</a
+          >
+          <a
+            href="{{ url_for('main.delete_billing', id=billing.id, next=request.path) }}"
+            class="btn btn-danger btn-sm"
+            >Eliminar</a
+          >
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    {% if saved_billing_info|length < 5 %} {% if saved_billing_info|length == 0
+    %}
+    <!-- Display the form by default if no billing information is saved -->
+    <div id="new-billing-info" class="show">
+      <div class="form-group">
+        {{ form.rfc.label(class="form-label") }} {{
+        form.rfc(class="form-control", id="rfc") }}
+      </div>
+      <div class="form-group mt-3">
+        {{ form.razon_social.label(class="form-label") }} {{
+        form.razon_social(class="form-control", id="razon_social") }}
+      </div>
+      <div class="form-group mt-3">
+        {{ form.cp.label(class="form-label") }} {{ form.cp(class="form-control",
+        id="cp") }}
+      </div>
+      <div class="form-group mt-3">
+        {{ form.regimen_fiscal.label(class="form-label") }} {{
+        form.regimen_fiscal(class="form-control", id="regimen_fiscal") }}
+      </div>
+      <div class="form-group mt-3">
+        {{ form.uso_cfdi.label(class="form-label") }} {{
+        form.uso_cfdi(class="form-control", id="uso_cfdi") }}
+      </div>
+      <div class="form-group mt-4">
+        {{ form.submit(class="btn btn-primary", type="submit") }}
+      </div>
+    </div>
+    {% else %}
+    <!-- Show the "Agregar nueva" button -->
+    <div class="form-check mb-3">
+      <button
+        id="add_new_billing"
+        class="btn btn-success"
+        data-bs-toggle="collapse"
+        data-bs-target="#new-billing-info"
+        aria-expanded="false"
+        aria-controls="new-billing-info"
+      >
+        Agregar nueva
+      </button>
+    </div>
+    <div id="new-billing-info" class="collapse">
+      <div class="form-group">
+        {{ form.rfc.label(class="form-label") }} {{
+        form.rfc(class="form-control", id="rfc") }}
+      </div>
+      <div class="form-group mt-3">
+        {{ form.razon_social.label(class="form-label") }} {{
+        form.razon_social(class="form-control", id="razon_social") }}
+      </div>
+      <div class="form-group mt-3">
+        {{ form.cp.label(class="form-label") }} {{ form.cp(class="form-control",
+        id="cp") }}
+      </div>
+      <div class="form-group mt-3">
+        {{ form.regimen_fiscal.label(class="form-label") }} {{
+        form.regimen_fiscal(class="form-control", id="regimen_fiscal") }}
+      </div>
+      <div class="form-group mt-3">
+        {{ form.uso_cfdi.label(class="form-label") }} {{
+        form.uso_cfdi(class="form-control", id="uso_cfdi") }}
+      </div>
+      <div class="form-group mt-4">
+        {{ form.submit(class="btn btn-primary", type="submit") }}
+      </div>
+    </div>
+    {% endif %} {% else %}
+    <label class="form-check-label"
+      >Elimina una dirección existente para agregar una nueva</label
+    >
+    {% endif %}
+  </form>
+</div>
+{% endblock %} {% include "footer.html" %}

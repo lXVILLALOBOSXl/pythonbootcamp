@@ -1,0 +1,65 @@
+{% include "header.html" %} {% block content %}
+<div class="container mt-5">
+  <h2 class="mt-3">Hola de nuevo, {{user.name}}!</h2>
+  <div class="row mt-4">
+    <div class="col-md-6">
+      <div class="card mb-3">
+        <div class="card-body">
+          <h5 class="card-title">
+            <a href="{{ url_for('main.account') }}">Mi Cuenta</a>
+          </h5>
+          <p class="card-text">Gestiona la información de tu cuenta.</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card mb-3">
+        <div class="card-body">
+          <h5 class="card-title">
+            <a href="{{ url_for('main.orders') }}">Mis Órdenes</a>
+          </h5>
+          <p class="card-text">
+            Revisa el estado de tus órdenes y su historial.
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card mb-3">
+        <div class="card-body">
+          <h5 class="card-title">
+            <a href="{{ url_for('main.addresses') }}"
+              >Mis Direcciones de Envío</a
+            >
+          </h5>
+          <p class="card-text">Agrega o modifica tus direcciones de envío.</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card mb-3">
+        <div class="card-body">
+          <h5 class="card-title">
+            <a href="{{ url_for('main.payment_addresses') }}"
+              >Mis Direcciones de Pago</a
+            >
+          </h5>
+          <p class="card-text">Agrega o modifica tus direcciones de pago.</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card mb-3">
+        <div class="card-body">
+          <h5 class="card-title">
+            <a href="{{ url_for('main.billing_info') }}"
+              >Mis Direcciones de Facturación</a
+            >
+          </h5>
+          <p class="card-text">Agrega o modifica tus datos de facturación.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} {% include "footer.html" %}

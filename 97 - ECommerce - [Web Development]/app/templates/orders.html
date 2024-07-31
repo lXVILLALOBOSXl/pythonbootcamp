@@ -1,0 +1,85 @@
+{% include "header.html" %} {% block content %}
+<div class="container mt-5">
+  <h2 class="mt-3">Órdenes</h2>
+  <div class="row mt-4">
+    {% for order in orders %}
+    <div class="col-md-12 mb-4">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="card-title">Orden ID: {{ order.id }}</h5>
+          <p class="card-text">
+            <strong>Fecha de Pedido:</strong> {{
+            order.date_ordered.strftime('%d-%m-%Y') }}
+          </p>
+        </div>
+        <div class="card-body">
+          <p><strong>Monto Total:</strong> MX${{ order.total_amount }}</p>
+          <p><strong>Estado de la Orden:</strong> {{ order.status }}</p>
+          {% if order.tracking_number %}
+          <p>
+            <strong>Número de Rastreo:</strong> {{ order.tracking_number }}
+            <a
+              href="https://mydhl.express.dhl/mx/es/tracking.html#/results?id={{ order.tracking_number }}"
+              target="_blank"
+              class="btn btn-primary btn-sm"
+              >Rastrear</a
+            >
+          </p>
+          {% endif %}
+          <p>
+            <strong>Enviado a:</strong> {{ order.shipping_address.nombre }} {{
+            order.shipping_address.apellidos }}, {{ order.shipping_address.calle
+            }}, {{ order.shipping_address.numero }}, {{
+            order.shipping_address.colonia }}, {{ order.shipping_address.ciudad
+            }}, {{ order.shipping_address.estado }}, {{
+            order.shipping_address.cp }}
+          </p>
+          <p>
+            <strong>Dirección de pago:</strong> {{ order.payment_address.nombre
+            }} {{ order.payment_address.apellidos }}, {{
+            order.payment_address.calle }}, {{ order.payment_address.numero }},
+            {{ order.payment_address.colonia }}, {{ order.payment_address.ciudad
+            }}, {{ order.payment_address.estado }}, {{ order.payment_address.cp
+            }}
+          </p>
+          {% if order.billing %}
+          <p>
+            <strong>Facturado a:</strong> {{ order.billing.razon_social }}, {{
+            order.billing.rfc }}, {{ order.billing.cp }} {{
+            order.billing.uso_cfdi }}
+          </p>
+          {% endif %}
+          <h6>Productos:</h6>
+          <ul class="list-group list-group-flush">
+            {% for item in order.order_items %}
+            <li class="list-group-item d-flex align-items-center">
+              {% if item.product.img_src %}
+              <img
+                src="{{ url_for('static', filename='img/' ~ item.product.img_src) }}"
+                alt="{{ item.product.name }}"
+                class="img-thumbnail me-3"
+                style="width: 50px; height: 50px"
+              />
+              {% endif %}
+
+              <div>
+                <strong>Producto:</strong>
+                <a
+                  href="{{ url_for('main.product', id=item.product.id) }}"
+                  class="me-3"
+                >
+                  {{ item.product.name }}
+                </a>
+                | <strong>Cantidad:</strong> {{ item.quantity }} |
+                <strong>Precio:</strong> MX${{ item.price }}
+              </div>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %} {% include "footer.html" %}

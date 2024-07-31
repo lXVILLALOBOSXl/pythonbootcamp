@@ -1,0 +1,163 @@
+{% include "header.html" %} {% block content %}
+<div class="container mt-5">
+  <h2 class="mt-3">Direcciones de envío</h2>
+  <form method="POST" action="{{ url_for('main.addresses') }}">
+    {{ form.hidden_tag() }}
+    <div class="saved-addresses mb-3">
+      {% for address in saved_addresses %}
+      <div class="address-item p-3 mb-3 border rounded">
+        <label class="form-check-label">
+          <p>{{ address.nombre }} {{ address.apellidos }}</p>
+          <p>{{ address.celular }}</p>
+          <p>
+            {{ address.calle }} {{ address.numero }} {{ address.num_int }}, {{
+            address.colonia }}, {{ address.ciudad }}, {{ address.estado }} {{
+            address.cp }}
+          </p>
+        </label>
+        <div class="d-flex justify-content-end mt-2">
+          <a
+            href="{{ url_for('main.edit_address', id=address.id, next=request.path) }}"
+            class="btn btn-primary btn-sm me-2"
+            >Editar</a
+          >
+          <a
+            href="{{ url_for('main.delete_address', id=address.id, next=request.path) }}"
+            class="btn btn-danger btn-sm"
+            >Eliminar</a
+          >
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    {% if saved_addresses|length < 5 %} {% if saved_addresses|length == 0 %}
+    <!-- Display the form by default if no addresses are saved -->
+    <div id="new-shipping-address" class="show">
+      <div class="form-group">
+        {{ form.nombre.label(class="form-label") }} {{
+        form.nombre(class="form-control", id="nombre") }}
+      </div>
+      <div class="form-group mt-3">
+        {{ form.apellidos.label(class="form-label") }} {{
+        form.apellidos(class="form-control", id="apellidos") }}
+      </div>
+      <div class="form-group mt-3">
+        {{ form.celular.label(class="form-label") }} {{
+        form.celular(class="form-control", id="celular") }}
+      </div>
+      <div class="form-group mt-3">
+        {{ form.empresa.label(class="form-label") }} {{
+        form.empresa(class="form-control", id="empresa") }}
+      </div>
+      <div class="form-group mt-3">
+        {{ form.calle.label(class="form-label") }} {{
+        form.calle(class="form-control", id="calle") }}
+      </div>
+      <div class="form-group mt-3">
+        {{ form.numero.label(class="form-label") }} {{
+        form.numero(class="form-control", id="numero") }}
+      </div>
+      <div class="form-group mt-3">
+        {{ form.num_int.label(class="form-label") }} {{
+        form.num_int(class="form-control", id="num_int") }}
+      </div>
+      <div class="form-group mt-3">
+        {{ form.referencias.label(class="form-label") }} {{
+        form.referencias(class="form-control", id="referencias") }}
+      </div>
+      <div class="form-group mt-3">
+        {{ form.colonia.label(class="form-label") }} {{
+        form.colonia(class="form-control", id="colonia") }}
+      </div>
+      <div class="form-group mt-3">
+        {{ form.cp.label(class="form-label") }} {{ form.cp(class="form-control",
+        id="cp") }}
+      </div>
+      <div class="form-group mt-3">
+        {{ form.ciudad.label(class="form-label") }} {{
+        form.ciudad(class="form-control", id="ciudad") }}
+      </div>
+      <div class="form-group mt-3">
+        {{ form.estado.label(class="form-label") }} {{
+        form.estado(class="form-control", id="estado") }}
+      </div>
+      <div class="form-group mt-4">
+        {{ form.submit(class="btn btn-primary", type="submit") }}
+      </div>
+    </div>
+    {% else %}
+    <!-- Show the "Agregar nueva" button -->
+    <div class="form-check mb-3">
+      <button
+        id="add_new_shipping"
+        class="btn btn-success"
+        data-bs-toggle="collapse"
+        data-bs-target="#new-shipping-address"
+        aria-expanded="false"
+        aria-controls="new-shipping-address"
+      >
+        Agregar nueva
+      </button>
+    </div>
+    <div id="new-shipping-address" class="collapse">
+      <div class="form-group">
+        {{ form.nombre.label(class="form-label") }} {{
+        form.nombre(class="form-control", id="nombre") }}
+      </div>
+      <div class="form-group mt-3">
+        {{ form.apellidos.label(class="form-label") }} {{
+        form.apellidos(class="form-control", id="apellidos") }}
+      </div>
+      <div class="form-group mt-3">
+        {{ form.celular.label(class="form-label") }} {{
+        form.celular(class="form-control", id="celular") }}
+      </div>
+      <div class="form-group mt-3">
+        {{ form.empresa.label(class="form-label") }} {{
+        form.empresa(class="form-control", id="empresa") }}
+      </div>
+      <div class="form-group mt-3">
+        {{ form.calle.label(class="form-label") }} {{
+        form.calle(class="form-control", id="calle") }}
+      </div>
+      <div class="form-group mt-3">
+        {{ form.numero.label(class="form-label") }} {{
+        form.numero(class="form-control", id="numero") }}
+      </div>
+      <div class="form-group mt-3">
+        {{ form.num_int.label(class="form-label") }} {{
+        form.num_int(class="form-control", id="num_int") }}
+      </div>
+      <div class="form-group mt-3">
+        {{ form.referencias.label(class="form-label") }} {{
+        form.referencias(class="form-control", id="referencias") }}
+      </div>
+      <div class="form-group mt-3">
+        {{ form.colonia.label(class="form-label") }} {{
+        form.colonia(class="form-control", id="colonia") }}
+      </div>
+      <div class="form-group mt-3">
+        {{ form.cp.label(class="form-label") }} {{ form.cp(class="form-control",
+        id="cp") }}
+      </div>
+      <div class="form-group mt-3">
+        {{ form.ciudad.label(class="form-label") }} {{
+        form.ciudad(class="form-control", id="ciudad") }}
+      </div>
+      <div class="form-group mt-3">
+        {{ form.estado.label(class="form-label") }} {{
+        form.estado(class="form-control", id="estado") }}
+      </div>
+      <div class="form-group mt-4">
+        {{ form.submit(class="btn btn-primary", type="submit") }}
+      </div>
+    </div>
+    {% endif %} {% else %}
+    <label class="form-check-label"
+      >Elimina una dirección existente para agregar una nueva</label
+    >
+    {% endif %}
+  </form>
+</div>
+{% endblock %} {% include "footer.html" %}
