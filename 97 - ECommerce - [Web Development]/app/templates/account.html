@@ -1,92 +1,47 @@
 {% include "header.html" %} {% block content %}
 <div class="container mt-5">
-  <h2 class="mt-3">Mi cuenta</h2>
-  <div class="row mt-4">
-    <div class="col-md-6">
-      <h4>Información de Usuario</h4>
-      <p><strong>Nombre:</strong> {{ user.name }}</p>
-      <p><strong>Correo Electrónico:</strong> {{ user.email }}</p>
+  <h2 class="mt-3">Configuracion de cuenta</h2>
+  <form action="{{ url_for('main.account') }}" method="POST">
+    {{ form.hidden_tag() }}
+    <div class="row mt-4">
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="name"><strong>Nombre:</strong></label>
+          {{ form.name(class_='form-control') }}
+        </div>
+        <div class="form-group">
+          <label for="email"><strong>Correo Electrónico:</strong></label>
+          {{ form.email(class_='form-control') }} {% if not is_verified %}
+          <div class="alert alert-warning" role="alert">
+            Tu cuenta no ha sido verificada. Por favor verifica tu correo
+            electrónico.
+            <a href="{{ url_for('main.send_verification_email') }}"
+              >Reenviar correo de verificación</a
+            >
+          </div>
+          {% endif %}
+        </div>
+        <div class="form-group">
+          <label for="phone"><strong>Celular:</strong></label>
+          {{ form.phone(class_='form-control') }}
+        </div>
+        <div class="form-group">
+          <label for="password"><strong>Contraseña anterior:</strong></label>
+          {{ form.password(class_='form-control') }}
+        </div>
+        <div class="form-group">
+          <label for="new_password"><strong>Nueva Contraseña:</strong></label>
+          {{ form.new_password(class_='form-control') }}
+        </div>
+        <div class="form-group">
+          <label for="confirm_password"
+            ><strong>Confirmar Contraseña:</strong></label
+          >
+          {{ form.confirm_password(class_='form-control') }}
+        </div>
+        {{ form.submit(class_='btn btn-primary mt-3') }}
+      </div>
     </div>
-    <div class="col-md-6">
-      <h4>Direcciones de Envío</h4>
-      {% for address in shipping_addresses %}
-      <p>
-        <strong>Nombre:</strong> {{ address.nombre }} {{ address.apellidos }}
-      </p>
-      <p><strong>Celular:</strong> {{ address.celular }}</p>
-      <p>
-        <strong>Direccion:</strong> {{ address.calle }} {{ address.numero }}, {{
-        address.colonia }}, {{ address.ciudad }}, {{ address.estado }}, {{
-        address.cp }}
-      </p>
-      <hr />
-      {% endfor %}
-    </div>
-    <div class="col-md-6">
-      <h4>Direcciones de Pago</h4>
-      {% for address in payment_addresses %}
-      <p>
-        <strong>Nombre:</strong> {{ address.nombre }} {{ address.apellidos }}
-      </p>
-      <p>
-        <strong>Direccion:</strong> {{ address.calle }} {{ address.numero }}, {{
-        address.colonia }}, {{ address.ciudad }}, {{ address.estado }}, {{
-        address.cp }}
-      </p>
-      <hr />
-      {% endfor %}
-    </div>
-    <div class="col-md-6">
-      <h4>Información de Facturación</h4>
-      {% for billing in billing_info %}
-      <p><strong>RFC:</strong> {{ billing.rfc }}</p>
-      <p><strong>Razón Social:</strong> {{ billing.razon_social }}</p>
-      <p><strong>Régimen Fiscal:</strong> {{ billing.regimen_fiscal }}</p>
-      <p><strong>Uso CFDI:</strong> {{ billing.uso_cfdi }}</p>
-      <p><strong>Código Postal:</strong> {{ billing.cp }}</p>
-      <hr />
-      {% endfor %}
-    </div>
-    <div class="col-md-12">
-      <h4>Órdenes</h4>
-      {% for order in orders %}
-      <p><strong>Orden ID:</strong> {{ order.id }}</p>
-      <p><strong>Fecha de Pedido:</strong> {{ order.date_ordered }}</p>
-      <p><strong>Monto Total:</strong> MX${{ order.total_amount }}</p>
-      <p><strong>Estado de la Orden:</strong> {{ order.status }}</p>
-      <p>
-        <strong>Enviado a:</strong> {{ order.shipping_address.nombre }} {{
-        order.shipping_address.apellidos }}, {{ order.shipping_address.calle }},
-        {{ order.shipping_address.numero }}, {{ order.shipping_address.colonia
-        }}, {{ order.shipping_address.ciudad }}, {{
-        order.shipping_address.estado }}, {{ order.shipping_address.cp }}
-      </p>
-      <p>
-        <strong>Direccion de pago:</strong> {{ order.payment_address.nombre }}
-        {{ order.payment_address.apellidos }}, {{ order.payment_address.calle
-        }}, {{ order.payment_address.numero }}, {{ order.payment_address.colonia
-        }}, {{ order.payment_address.ciudad }}, {{ order.payment_address.estado
-        }}, {{ order.payment_address.cp }}
-      </p>
-      {% if order.billing %}
-      <p>
-        <strong>Facturado a:</strong> {{ order.billing.razon_social }}, {{
-        order.billing.rfc }}, {{ order.billing.cp }} {{ order.billing.uso_cfdi
-        }}
-      </p>
-      {% endif %}
-      <ul>
-        {% for item in order.order_items %}
-        <li>
-          <strong>Producto:</strong> {{ item.product.name }} |
-          <strong>Cantidad:</strong> {{ item.quantity }} |
-          <strong>Precio:</strong> MX${{ item.price }}
-        </li>
-        {% endfor %}
-      </ul>
-      <hr />
-      {% endfor %}
-    </div>
-  </div>
+  </form>
 </div>
 {% endblock %} {% include "footer.html" %}

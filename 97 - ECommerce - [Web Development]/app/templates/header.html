@@ -55,14 +55,14 @@
           Menu <i class="fas fa-bars"></i>
         </button>
         <div class="collapse navbar-collapse" id="navbarResponsive">
-          <ul class="navbar-nav ms-auto py-4 py-lg-0">
+          <!-- <ul class="navbar-nav ms-auto py-4 py-lg-0">
             <li class="nav-item">
               <a class="nav-link px-lg-3 py-3 py-lg-4" href="#">Productos</a>
             </li>
             <li class="nav-item">
               <a class="nav-link px-lg-3 py-3 py-lg-4" href="#">Marcas</a>
             </li>
-          </ul>
+          </ul> -->
           <form
             class="d-flex ms-auto navbar-form"
             action="{{ url_for('main.search') }}"
@@ -107,7 +107,7 @@
               </li>
               {% else %}
               <li>
-                <a class="dropdown-item" href="{{ url_for('main.account') }}"
+                <a class="dropdown-item" href="{{ url_for('main.control_panel') }}"
                   >Mi cuenta</a
                 >
               </li>

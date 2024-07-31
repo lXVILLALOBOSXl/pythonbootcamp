@@ -146,36 +146,73 @@ def register():
     )
 
 
-@main.route("/account")
+@main.route("/control-panel")
 @login_required
-def account():
+def control_panel():
     user = current_user
-    shipping_addresses = ShippingAddress.query.filter_by(
-        client_id=current_user.id, is_deleted=False
-    ).all()
-    payment_addresses = PaymentAddress.query.filter_by(
-        client_id=user.id, is_deleted=False
-    ).all()
-    billing_info = Billing.query.filter_by(client_id=user.id, is_deleted=False).all()
+    return render_template("control_panel.html", user=user)
+
+
+@main.route("/orders")
+@login_required
+def orders():
+    user = current_user
     orders = (
         Order.query.filter_by(client_id=user.id)
+        .order_by(Order.date_ordered.desc())
         .options(joinedload(Order.order_items).joinedload(OrderItem.product))
         .all()
     )
-    return render_template(
-        "account.html",
-        user=user,
-        shipping_addresses=shipping_addresses,
-        payment_addresses=payment_addresses,
-        orders=orders,
-        billing_info=billing_info,
-    )
+    return render_template("orders.html", orders=orders)
+
+
+@main.route("/account", methods=["GET", "POST"])
+@login_required
+def account():
+    user = current_user
+    form = AccountConfigForm(obj=current_user)
+
+    if form.validate_on_submit():
+        if check_password_hash(user.password_hash, form.password.data):
+            user.name = form.name.data
+            if user.email != form.email.data:
+                user.email = form.email.data
+                user.is_verified = False
+            user.phone = form.phone.data
+            if form.new_password.data:
+                user.password_hash = generate_password_hash(
+                    form.new_password.data, method="pbkdf2:sha256", salt_length=8
+                )
+            db.session.commit()
+            flash("Tu cuenta ha sido actualizada", "success")
+            return redirect(url_for("main.account"))
+        else:
+            flash("Contraseña incorrecta", "danger")
+            return redirect(url_for("main.account"))
+
+    return render_template("account.html", form=form, is_verified=user.is_verified)
 
 
 @main.route("/logout")
 def logout():
     logout_user()
     return redirect(url_for("main.index"))
+
+
+@main.route("/send_verification_email", methods=["GET", "POST"])
+@login_required
+def send_verification_email():
+    if current_user.is_verified:
+        flash("Tu cuenta ya está verificada.", "success")
+        return redirect(url_for("main.account"))
+    send_confirmation_email(current_user.email)
+
+    flash(
+        "Se ha enviado un correo de verificación a tu dirección de correo electrónico.",
+        "success",
+    )
+
+    return redirect(url_for("main.account"))
 
 
 @main.route("/checkout", methods=["GET", "POST"])
@@ -200,10 +237,6 @@ def checkout():
         )
         return redirect(url_for("main.cart"))
 
-    shipping_count = ShippingAddress.query.filter_by(client_id=current_user.id).count()
-    payment_count = PaymentAddress.query.filter_by(client_id=current_user.id).count()
-    billing_count = Billing.query.filter_by(client_id=current_user.id).count()
-
     saved_shipping_addresses = ShippingAddress.query.filter_by(
         client_id=current_user.id, is_deleted=False
     ).all()
@@ -218,7 +251,6 @@ def checkout():
     total = sum(item["price"] * item["quantity"] for item in cart)
 
     if form.validate_on_submit():
-        print("Form validated")
         shipping_address_id = request.form.get("shipping_address")
         payment_address_id = request.form.get("payment_address")
         billing_info_id = request.form.get("billing_info")
@@ -246,7 +278,7 @@ def checkout():
 
         if form.same_address.data:
             # If the shipping address is already saved in payment address, don't save it again
-            if PaymentAddress.query.filter_by(
+            existing_payment_address = PaymentAddress.query.filter_by(
                 client_id=current_user.id,
                 nombre=shipping_address.nombre,
                 apellidos=shipping_address.apellidos,
@@ -258,20 +290,9 @@ def checkout():
                 cp=shipping_address.cp,
                 ciudad=shipping_address.ciudad,
                 estado=shipping_address.estado,
-            ).first():
-                payment_address = PaymentAddress.query.filter_by(
-                    client_id=current_user.id,
-                    nombre=shipping_address.nombre,
-                    apellidos=shipping_address.apellidos,
-                    calle=shipping_address.calle,
-                    numero=shipping_address.numero,
-                    num_int=shipping_address.num_int,
-                    referencias=shipping_address.referencias,
-                    colonia=shipping_address.colonia,
-                    cp=shipping_address.cp,
-                    ciudad=shipping_address.ciudad,
-                    estado=shipping_address.estado,
-                ).first()
+            ).first()
+            if existing_payment_address:
+                payment_address = existing_payment_address
             else:
                 payment_address = PaymentAddress(
                     client_id=current_user.id,
@@ -363,13 +384,43 @@ def checkout():
         form=form,
         cart=cart,
         total=total,
-        shipping_count=shipping_count,
-        payment_count=payment_count,
-        billing_count=billing_count,
         saved_shipping_addresses=saved_shipping_addresses,
         saved_payment_addresses=saved_payment_addresses,
         saved_billing_info=saved_billing_info,
     )
+
+
+@main.route("/addresses", methods=["GET", "POST"])
+@login_required
+def addresses():
+    saved_addresses = ShippingAddress.query.filter_by(
+        client_id=current_user.id, is_deleted=False
+    ).all()
+
+    form = ShippingAddressForm()
+
+    if form.validate_on_submit():
+        new_address = ShippingAddress(
+            client_id=current_user.id,
+            nombre=form.nombre.data,
+            apellidos=form.apellidos.data,
+            celular=form.celular.data,
+            empresa=form.empresa.data,
+            calle=form.calle.data,
+            numero=form.numero.data,
+            num_int=form.num_int.data,
+            referencias=form.referencias.data,
+            colonia=form.colonia.data,
+            cp=form.cp.data,
+            ciudad=form.ciudad.data,
+            estado=form.estado.data,
+        )
+        db.session.add(new_address)
+        db.session.commit()
+        flash("Dirección de envío agregada con éxito", "success")
+        return redirect(url_for("main.addresses"))
+
+    return render_template("addresses.html", form=form, saved_addresses=saved_addresses)
 
 
 @main.route("/edit_address/<int:id>", methods=["GET", "POST"])
@@ -425,6 +476,39 @@ def edit_address(id):
     return render_template("edit_address.html", form=form)
 
 
+@main.route("/payment-addresses", methods=["GET", "POST"])
+@login_required
+def payment_addresses():
+    saved_addresses = PaymentAddress.query.filter_by(
+        client_id=current_user.id, is_deleted=False
+    ).all()
+
+    form = PaymentAddressForm()
+
+    if form.validate_on_submit():
+        new_address = PaymentAddress(
+            client_id=current_user.id,
+            nombre=form.nombre.data,
+            apellidos=form.apellidos.data,
+            calle=form.calle.data,
+            numero=form.numero.data,
+            num_int=form.num_int.data,
+            referencias=form.referencias.data,
+            colonia=form.colonia.data,
+            cp=form.cp.data,
+            ciudad=form.ciudad.data,
+            estado=form.estado.data,
+        )
+        db.session.add(new_address)
+        db.session.commit()
+        flash("Dirección de facturación agregada con éxito", "success")
+        return redirect(url_for("main.payment_addresses"))
+
+    return render_template(
+        "payment_addresses.html", form=form, saved_addresses=saved_addresses
+    )
+
+
 @main.route("/edit_payment/<int:id>", methods=["GET", "POST"])
 def edit_payment(id):
     if not current_user.is_authenticated:
@@ -474,6 +558,34 @@ def edit_payment(id):
             next_page = url_for("main.account")
         return redirect(next_page)
     return render_template("edit_payment.html", form=form)
+
+
+@main.route("/billing-info", methods=["GET", "POST"])
+@login_required
+def billing_info():
+    saved_billing_info = Billing.query.filter_by(
+        client_id=current_user.id, is_deleted=False
+    ).all()
+
+    form = BillingForm()
+
+    if form.validate_on_submit():
+        new_billing_info = Billing(
+            client_id=current_user.id,
+            rfc=form.rfc.data,
+            razon_social=form.razon_social.data,
+            cp=form.cp.data,
+            regimen_fiscal=form.regimen_fiscal.data,
+            uso_cfdi=form.uso_cfdi.data,
+        )
+        db.session.add(new_billing_info)
+        db.session.commit()
+        flash("Información de facturación agregada con éxito", "success")
+        return redirect(url_for("main.billing_info"))
+
+    return render_template(
+        "billing_info.html", form=form, saved_billing_info=saved_billing_info
+    )
 
 
 @main.route("/edit_billing/<int:id>", methods=["GET", "POST"])

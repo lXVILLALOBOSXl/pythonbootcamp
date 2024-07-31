@@ -64,6 +64,7 @@ class LoginForm(FlaskForm):
 class RegisterForm(FlaskForm):
     name = StringField("Nombre", validators=[DataRequired(), Length(min=2, max=100)])
     email = StringField("Correo Electrónico", validators=[DataRequired(), Email()])
+    phone = StringField("Celular", validators=[DataRequired(), Length(min=10, max=10)])
     password = PasswordField("Contraseña", validators=[DataRequired(), Length(min=6)])
     confirm_password = PasswordField(
         "Confirmar Contraseña", validators=[DataRequired(), EqualTo("password")]
@@ -187,67 +188,79 @@ class CheckoutForm(FlaskForm):
 
 
 class ShippingAddressForm(FlaskForm):
-    nombre = StringField("Nombre *", validators=[Optional(), Length(min=1, max=100)])
+    nombre = StringField("Nombre *", validators=[DataRequired(), Length(min=1, max=100)])
     apellidos = StringField(
-        "Apellidos *", validators=[Optional(), Length(min=1, max=100)]
+        "Apellidos *", validators=[DataRequired(), Length(min=1, max=100)]
     )
-    celular = StringField("Celular *", validators=[Optional(), Length(min=10, max=10)])
+    celular = StringField("Celular *", validators=[DataRequired(), Length(min=10, max=10)])
     empresa = StringField(
         "Empresa", validators=[Optional(), Length(max=100)], default=""
     )
-    calle = StringField("Calle *", validators=[Optional(), Length(min=1, max=100)])
-    numero = StringField("Número *", validators=[Optional(), Length(min=1, max=10)])
+    calle = StringField("Calle *", validators=[DataRequired(), Length(min=1, max=100)])
+    numero = StringField("Número *", validators=[DataRequired(), Length(min=1, max=10)])
     num_int = StringField(
         "Número Interior", validators=[Optional(), Length(max=10)], default=""
     )
     referencias = StringField(
         "Referencias", validators=[Optional(), Length(max=255)], default=""
     )
-    colonia = StringField("Colonia *", validators=[Optional(), Length(min=1, max=100)])
-    cp = StringField("Código Postal *", validators=[Optional(), Length(min=5, max=5)])
-    ciudad = StringField("Ciudad *", validators=[Optional(), Length(min=1, max=100)])
-    estado = SelectField("Estado *", validators=[Optional()], choices=choices)
+    colonia = StringField("Colonia *", validators=[DataRequired(), Length(min=1, max=100)])
+    cp = StringField("Código Postal *", validators=[DataRequired(), Length(min=5, max=5)])
+    ciudad = StringField("Ciudad *", validators=[DataRequired(), Length(min=1, max=100)])
+    estado = SelectField("Estado *", validators=[DataRequired()], choices=choices)
     submit = SubmitField("Guardar Dirección de Envío")
 
 
 class PaymentAddressForm(FlaskForm):
-    nombre = StringField("Nombre *", validators=[Optional(), Length(min=1, max=100)])
+    nombre = StringField("Nombre *", validators=[DataRequired(), Length(min=1, max=100)])
     apellidos = StringField(
-        "Apellidos *", validators=[Optional(), Length(min=1, max=100)]
+        "Apellidos *", validators=[DataRequired(), Length(min=1, max=100)]
     )
-    calle = StringField("Calle *", validators=[Optional(), Length(min=1, max=100)])
-    numero = StringField("Número *", validators=[Optional(), Length(min=1, max=10)])
+    calle = StringField("Calle *", validators=[DataRequired(), Length(min=1, max=100)])
+    numero = StringField("Número *", validators=[DataRequired(), Length(min=1, max=10)])
     num_int = StringField(
         "Número Interior", validators=[Optional(), Length(max=10)], default=""
     )
     referencias = StringField(
         "Referencias", validators=[Optional(), Length(max=255)], default=""
     )
-    colonia = StringField("Colonia *", validators=[Optional(), Length(min=1, max=100)])
-    cp = StringField("Código Postal *", validators=[Optional(), Length(min=5, max=5)])
-    ciudad = StringField("Ciudad *", validators=[Optional(), Length(min=1, max=100)])
-    estado = SelectField("Estado *", validators=[Optional()], choices=choices)
+    colonia = StringField("Colonia *", validators=[DataRequired(), Length(min=1, max=100)])
+    cp = StringField("Código Postal *", validators=[DataRequired(), Length(min=5, max=5)])
+    ciudad = StringField("Ciudad *", validators=[DataRequired(), Length(min=1, max=100)])
+    estado = SelectField("Estado *", validators=[DataRequired()], choices=choices)
     submit = SubmitField("Guardar Dirección de Facturación")
 
 
 class BillingForm(FlaskForm):
-    rfc = StringField("RFC *", validators=[Optional(), Length(max=13)], default="")
+    rfc = StringField("RFC *", validators=[DataRequired(), Length(max=13)], default="")
     razon_social = StringField(
-        "Razón Social o nombre *", validators=[Optional(), Length(max=100)], default=""
+        "Razón Social o nombre *", validators=[DataRequired(), Length(max=100)], default=""
     )
     cp = StringField(
-        "Código Postal *", validators=[Optional(), Length(min=5, max=5)], default=""
+        "Código Postal *", validators=[DataRequired(), Length(min=5, max=5)], default=""
     )
     regimen_fiscal = SelectField(
         "Régimen Fiscal *",
-        validators=[Optional()],
+        validators=[DataRequired()],
         choices=[("R1", "Régimen 1"), ("R2", "Régimen 2")],
         default="",
     )
     uso_cfdi = SelectField(
         "Uso CFDI *",
-        validators=[Optional()],
+        validators=[DataRequired()],
         choices=[("U1", "Uso 1"), ("U2", "Uso 2")],
         default="",
     )
     submit = SubmitField("Guardar Información de Facturación")
+
+class AccountConfigForm(FlaskForm):
+    name = StringField('Nombre', validators=[DataRequired()])
+    email = StringField('Correo Electrónico', validators=[DataRequired(), Email()])
+    phone = StringField('Celular', validators=[DataRequired(), Length(min=10, max=10)])
+    password = PasswordField('Contraseña anterior', validators=[DataRequired()])
+    new_password = PasswordField('Nueva Contraseña', validators=[Optional()])
+    confirm_password = PasswordField('Confirmar Contraseña', validators=[
+        Optional(),
+        EqualTo('new_password', message='Las contraseñas deben coincidir')
+    ])
+    submit = SubmitField('Actualizar') 
