@@ -47,10 +47,17 @@ choices = [
 
 
 class NotifyExistencesForm(FlaskForm):
-    name = StringField("Nombre", validators=[DataRequired()])
-    email = StringField("Email", validators=[DataRequired(), Email()])
-    comments = TextAreaField("Comentarios (opcional)")
+    name = StringField("Nombre *", validators=[DataRequired()])
+    email = StringField("Email *", validators=[DataRequired(), Email()])
+    comments = TextAreaField("Comentarios")
     submit = SubmitField("Notificarme", render_kw={"class": "btn btn-primary"})
+
+    def __init__(self, name=None, email=None, *args, **kwargs):
+        super(NotifyExistencesForm, self).__init__(*args, **kwargs)
+        if name:
+            self.name.data = name
+        if email:
+            self.email.data = email
 
 
 class LoginForm(FlaskForm):
@@ -65,7 +72,7 @@ class RegisterForm(FlaskForm):
     name = StringField("Nombre *", validators=[DataRequired(), Length(min=2, max=100)])
     email = StringField("Correo Electrónico *", validators=[DataRequired(), Email()])
     phone = StringField("Celular *", validators=[DataRequired(), Length(min=10, max=10)], render_kw={"pattern": "[0-9]{10}", "title": "Verifica el número celular"})
-    password = PasswordField("Contraseña *", validators=[DataRequired(), Length(min=8)], render_kw={"pattern": "^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!.?-])[A-Za-z\d@$!.?-]{8,}$"})
+    password = PasswordField("Contraseña *", validators=[DataRequired(), Length(min=8)], render_kw={"pattern": "^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!.?-])[A-Za-z\d@$!.?-]{8,}$", "title": "La contraseña debe contener al menos una mayúscula, una minúscula, un número y un caracter especial"})
     confirm_password = PasswordField(
         "Confirmar Contraseña *", validators=[DataRequired(), EqualTo("password")]
     )
@@ -83,7 +90,7 @@ class RequestResetForm(FlaskForm):
 
 class ResetPasswordForm(FlaskForm):
     password = PasswordField(
-        "Nueva Contraseña", validators=[DataRequired(), Length(min=8)], render_kw={"pattern": "^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!.?-])[A-Za-z\d@$!.?-]{8,}$"}
+        "Nueva Contraseña", validators=[DataRequired(), Length(min=8)], render_kw={"pattern": "^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!.?-])[A-Za-z\d@$!.?-]{8,}$", "title": "La contraseña debe contener al menos una mayúscula, una minúscula, un número y un caracter especial"}
     )
     confirm_password = PasswordField(
         "Confirmar Nueva Contraseña", validators=[DataRequired(), EqualTo("password")]
@@ -110,7 +117,8 @@ class CheckoutForm(FlaskForm):
         "Calle *", validators=[Optional(), Length(min=1, max=100)]
     )
     shipping_numero = StringField(
-        "Número *", validators=[Optional(), Length(min=1, max=10)]
+        "Número *", validators=[Optional(), Length(min=1, max=10)],
+        render_kw={"pattern": "^\d{1,10}$", "title": "Verifica el Número"}
     )
     shipping_num_int = StringField(
         "Número Interior", validators=[Optional(), Length(max=10)], default=""
@@ -122,7 +130,7 @@ class CheckoutForm(FlaskForm):
         "Colonia *", validators=[Optional(), Length(min=1, max=100)]
     )
     shipping_cp = StringField(
-        "Código Postal *", validators=[Optional(), Length(min=5, max=5)]
+        "Código Postal *", validators=[Optional(), Length(min=5, max=5)], render_kw={"pattern": "^\\d{5}$", "title": "Verifica el código postal"}
     )
     shipping_ciudad = StringField(
         "Ciudad *", validators=[Optional(), Length(min=1, max=100)]
@@ -142,7 +150,8 @@ class CheckoutForm(FlaskForm):
         "Calle *", validators=[Optional(), Length(min=1, max=100)]
     )
     payment_numero = StringField(
-        "Número *", validators=[Optional(), Length(min=1, max=10)]
+        "Número *", validators=[Optional(), Length(min=1, max=10)],
+        render_kw={"pattern": "^\d{1,10}$", "title": "Verifica el Número"}
     )
     payment_num_int = StringField(
         "Número Interior", validators=[Optional(), Length(max=10)], default=""
@@ -154,7 +163,7 @@ class CheckoutForm(FlaskForm):
         "Colonia *", validators=[Optional(), Length(min=1, max=100)]
     )
     payment_cp = StringField(
-        "Código Postal *", validators=[Optional(), Length(min=5, max=5)]
+        "Código Postal *", validators=[Optional(), Length(min=5, max=5)], render_kw={"pattern": "^\\d{5}$", "title": "Verifica el código postal"}
     )
     payment_ciudad = StringField(
         "Ciudad *", validators=[Optional(), Length(min=1, max=100)]
@@ -169,7 +178,7 @@ class CheckoutForm(FlaskForm):
         "Razón Social o nombre *", validators=[Optional(), Length(max=100)], default=""
     )
     cp_invoice = StringField(
-        "Código Postal *", validators=[Optional(), Length(min=5, max=5)], default=""
+        "Código Postal *", validators=[Optional(), Length(min=5, max=5)], default="", render_kw={"pattern": "^\\d{5}$", "title": "Verifica el código postal"}
     )
     payment_regimen_fiscal = SelectField(
         "Régimen Fiscal *",
@@ -197,7 +206,7 @@ class ShippingAddressForm(FlaskForm):
         "Empresa", validators=[Optional(), Length(max=100)], default=""
     )
     calle = StringField("Calle *", validators=[DataRequired(), Length(min=1, max=100)])
-    numero = StringField("Número *", validators=[DataRequired(), Length(min=1, max=10)])
+    numero = StringField("Número *", validators=[DataRequired(), Length(min=1, max=10)], render_kw={"pattern": "^\d{1,10}$", "title": "Verifica el Número"})
     num_int = StringField(
         "Número Interior", validators=[Optional(), Length(max=10)], default=""
     )
@@ -205,7 +214,7 @@ class ShippingAddressForm(FlaskForm):
         "Referencias", validators=[Optional(), Length(max=255)], default=""
     )
     colonia = StringField("Colonia *", validators=[DataRequired(), Length(min=1, max=100)])
-    cp = StringField("Código Postal *", validators=[DataRequired(), Length(min=5, max=5)])
+    cp = StringField("Código Postal *", validators=[DataRequired(), Length(min=5, max=5)], render_kw={"pattern": "^\\d{5}$", "title": "Verifica el código postal"})
     ciudad = StringField("Ciudad *", validators=[DataRequired(), Length(min=1, max=100)])
     estado = SelectField("Estado *", validators=[DataRequired()], choices=choices)
     submit = SubmitField("Guardar Dirección de Envío")
@@ -217,7 +226,7 @@ class PaymentAddressForm(FlaskForm):
         "Apellidos *", validators=[DataRequired(), Length(min=1, max=100)]
     )
     calle = StringField("Calle *", validators=[DataRequired(), Length(min=1, max=100)])
-    numero = StringField("Número *", validators=[DataRequired(), Length(min=1, max=10)])
+    numero = StringField("Número *", validators=[DataRequired(), Length(min=1, max=10)], render_kw={"pattern": "^\d{1,10}$", "title": "Verifica el Número"})
     num_int = StringField(
         "Número Interior", validators=[Optional(), Length(max=10)], default=""
     )
@@ -225,7 +234,7 @@ class PaymentAddressForm(FlaskForm):
         "Referencias", validators=[Optional(), Length(max=255)], default=""
     )
     colonia = StringField("Colonia *", validators=[DataRequired(), Length(min=1, max=100)])
-    cp = StringField("Código Postal *", validators=[DataRequired(), Length(min=5, max=5)])
+    cp = StringField("Código Postal *", validators=[DataRequired(), Length(min=5, max=5)], render_kw={"pattern": "^\\d{5}$", "title": "Verifica el código postal"})
     ciudad = StringField("Ciudad *", validators=[DataRequired(), Length(min=1, max=100)])
     estado = SelectField("Estado *", validators=[DataRequired()], choices=choices)
     submit = SubmitField("Guardar Dirección de Facturación")
@@ -237,7 +246,7 @@ class BillingForm(FlaskForm):
         "Razón Social o nombre *", validators=[DataRequired(), Length(max=100)], default=""
     )
     cp = StringField(
-        "Código Postal *", validators=[DataRequired(), Length(min=5, max=5)], default=""
+        "Código Postal *", validators=[DataRequired(), Length(min=5, max=5)], default="", render_kw={"pattern": "^\\d{5}$", "title": "Verifica el código postal"}
     )
     regimen_fiscal = SelectField(
         "Régimen Fiscal *",
@@ -258,7 +267,7 @@ class AccountConfigForm(FlaskForm):
     email = StringField('Correo Electrónico', validators=[DataRequired(), Email()])
     phone = StringField('Celular', validators=[DataRequired(), Length(min=10, max=10)],render_kw={"pattern": "[0-9]{10}", "title": "Verifica el número celular"}) 
     actual_password = PasswordField('Contraseña actual', validators=[DataRequired()])
-    password = PasswordField('Nueva Contraseña', validators=[Optional(), Length(min=8)], render_kw={"pattern": "^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!.?-])[A-Za-z\d@$!.?-]{8,}$"})
+    password = PasswordField('Nueva Contraseña', validators=[Optional(), Length(min=8)], render_kw={"pattern": "^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!.?-])[A-Za-z\d@$!.?-]{8,}$", "title": "La contraseña debe contener al menos una mayúscula, una minúscula, un número y un caracter especial"})
     confirm_password = PasswordField('Confirmar Contraseña', validators=[
         Optional(),
         EqualTo('password')

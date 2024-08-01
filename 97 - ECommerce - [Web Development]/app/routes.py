@@ -51,8 +51,11 @@ def index():
 
 @main.route("/notify/<int:id>", methods=["GET", "POST"])
 def notify(id):
-    form = NotifyExistencesForm()
     product = Product.query.get_or_404(id)
+    if not current_user.is_authenticated:
+        form = NotifyExistencesForm()
+    else:
+        form = NotifyExistencesForm(name=current_user.name, email=current_user.email)
     if form.validate_on_submit():
         flash(
             "Será notificado cuando el producto se encuentre en existencia", "success"
