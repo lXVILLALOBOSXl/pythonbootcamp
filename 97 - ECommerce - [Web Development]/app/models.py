@@ -10,10 +10,7 @@ class Product(db.Model):
     internal_sku = db.Column(db.String(50), unique=True, nullable=False)
     brand_sku = db.Column(db.String(50), default="N/A", server_default="N/A")
     price = db.Column(db.Float, nullable=False)
-    brand = db.Column(db.String(50), default="N/A", server_default="N/A")
     description = db.Column(db.Text, default="N/A", server_default="N/A")
-    units = db.Column(db.String(10), default="N/A", server_default="N/A")
-    category = db.Column(db.String(50), default="N/A", server_default="N/A")
     units_in_stock = db.Column(db.Integer, default=0, server_default="0")
     old_price = db.Column(db.Float, nullable=True)
     is_featured = db.Column(db.Boolean, default=False, server_default="0")
@@ -22,6 +19,7 @@ class Product(db.Model):
     )
     img_src = db.Column(db.String(255), nullable=True)
     images = db.relationship("ProductImage", backref="product", lazy=True)
+    tags = db.relationship('Tag', secondary='product_tags', back_populates='products')
 
     def __repr__(self):
         return f"<Product {self.internal_sku}>"
@@ -34,6 +32,35 @@ class ProductImage(db.Model):
 
     def __repr__(self):
         return f"<ProductImage {self.img_src}>"
+    
+class Category(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), nullable=False)
+
+    tags = db.relationship('Tag', backref='category', lazy=True)
+
+    def __repr__(self):
+        return f"<Category {self.name}>"
+
+class Tag(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), nullable=False)
+    category_id = db.Column(db.Integer, db.ForeignKey('category.id'), nullable=False)
+
+    products = db.relationship('Product', secondary='product_tags', back_populates='tags')
+
+    def __repr__(self):
+        return f"<Tag {self.name}>"
+    
+class ProductTag(db.Model):
+    product_id = db.Column(db.Integer, db.ForeignKey('product.id'), primary_key=True)
+    tag_id = db.Column(db.Integer, db.ForeignKey('tag.id'), primary_key=True)
+
+    product = db.relationship('Product', back_populates='product_tags')
+    tag = db.relationship('Tag', back_populates='product_tags')
+
+    def __repr__(self):
+        return f"<ProductTag {self.product_id} - {self.tag_id}>"
 
 
 class Client(db.Model, UserMixin):
