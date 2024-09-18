@@ -19,7 +19,9 @@ class Product(db.Model):
     )
     img_src = db.Column(db.String(255), nullable=True)
     images = db.relationship("ProductImage", backref="product", lazy=True)
-    tags = db.relationship('Tag', secondary='product_tags', back_populates='products')
+    
+    product_tags = db.relationship('ProductTag', back_populates='product')
+    tags = db.relationship('Tag', secondary='product_tag', back_populates='products')
 
     def __repr__(self):
         return f"<Product {self.internal_sku}>"
@@ -47,7 +49,8 @@ class Tag(db.Model):
     name = db.Column(db.String(50), nullable=False)
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'), nullable=False)
 
-    products = db.relationship('Product', secondary='product_tags', back_populates='tags')
+    product_tags = db.relationship('ProductTag', back_populates='tag')
+    products = db.relationship('Product', secondary='product_tag', back_populates='tags')
 
     def __repr__(self):
         return f"<Tag {self.name}>"
@@ -175,3 +178,12 @@ class OrderItem(db.Model):
 
     def __repr__(self):
         return f"<OrderItem {self.id}>"
+
+class Test(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), nullable=False)
+    description = db.Column(db.Text, nullable=False)
+    date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f"<Test {self.name}>"

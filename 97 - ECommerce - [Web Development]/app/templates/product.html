@@ -7,52 +7,40 @@
       <div class="row">
         <div class="col-12 col-md-6 mb-4">
           <!-- Carousel for product images -->
-          <div
-            id="productCarousel"
-            class="carousel slide"
-            data-bs-ride="carousel"
-          >
+          <div id="productCarousel" class="carousel slide" data-bs-ride="carousel">
             <div class="carousel-inner">
               {% for image in images %}
               <div class="carousel-item {% if loop.first %}active{% endif %}">
-                <img
-                  src="{{ url_for('static', filename='img/' ~ image.img_src) }}"
-                  class="d-block w-100 product-img"
-                  alt="{{ product.name }}"
-                />
+                <img src="{{ url_for('static', filename='img/' ~ image.img_src) }}" class="d-block w-100 product-img" alt="{{ product.name }}" />
               </div>
               {% endfor %}
             </div>
-            <button
-              class="carousel-control-prev custom-carousel-control"
-              type="button"
-              data-bs-target="#productCarousel"
-              data-bs-slide="prev"
-            >
-              <span
-                class="carousel-control-prev-icon custom-carousel-icon"
-                aria-hidden="true"
-              ></span>
+            <button class="carousel-control-prev custom-carousel-control" type="button" data-bs-target="#productCarousel" data-bs-slide="prev">
+              <span class="carousel-control-prev-icon custom-carousel-icon" aria-hidden="true"></span>
               <span class="visually-hidden">Previous</span>
             </button>
-            <button
-              class="carousel-control-next custom-carousel-control"
-              type="button"
-              data-bs-target="#productCarousel"
-              data-bs-slide="next"
-            >
-              <span
-                class="carousel-control-next-icon custom-carousel-icon"
-                aria-hidden="true"
-              ></span>
+            <button class="carousel-control-next custom-carousel-control" type="button" data-bs-target="#productCarousel" data-bs-slide="next">
+              <span class="carousel-control-next-icon custom-carousel-icon" aria-hidden="true"></span>
               <span class="visually-hidden">Next</span>
             </button>
           </div>
         </div>
         <div class="col-12 col-md-6 d-flex flex-column">
           <h3>{{ product.name }}</h3>
-          <p><strong>Marca:</strong> {{ product.brand }}</p>
-          <p><strong>Categoría:</strong> {{ product.category }}</p>
+
+          <!-- Características Section -->
+          <h4>Características:</h4>
+          <table class="table">
+            <tbody>
+              {% for category, tags in tags_by_category.items() %}
+              <tr>
+                <td><strong>{{ category }}:</strong></td>
+                <td>{{ tags | join(', ') }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+
           <p><strong>SKU Interno:</strong> {{ product.internal_sku }}</p>
           <p><strong>SKU de la Marca:</strong> {{ product.brand_sku }}</p>
           <p>
@@ -67,11 +55,7 @@
           <p><strong>Descripción:</strong> {{ product.description }}</p>
           {% if product.units_in_stock > 0 %}
           <form action="{{ url_for('main.add', id=product.id) }}" method="post">
-            <select
-              class="form-select mt-2"
-              aria-label="Cantidad de piezas"
-              name="quantity"
-            >
+            <select class="form-select mt-2" aria-label="Cantidad de piezas" name="quantity">
               {% for i in range(1, product.units_in_stock + 1) %}
               <option value="{{ i }}">{{ i }}</option>
               {% endfor %}
@@ -86,11 +70,7 @@
           {% else %}
           <span class="text-danger">Agotado</span>
           <div class="mt-auto">
-            <a
-              href="{{ url_for('main.notify', id=product.id) }}"
-              class="btn btn-warning"
-              >Notificarme de nuevas existencias</a
-            >
+            <a href="{{ url_for('main.notify', id=product.id) }}" class="btn btn-warning">Notificarme de nuevas existencias</a>
           </div>
           {% endif %}
         </div>

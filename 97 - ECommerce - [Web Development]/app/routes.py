@@ -28,25 +28,32 @@ main = Blueprint("main", __name__)
 
 @main.route("/")
 def index():
+    # Query for featured products, ordered by date_added
     featured_products = (
         Product.query.filter_by(is_featured=True)
         .order_by(Product.date_added.desc())
         .limit(9)
         .all()
     )
+
+    # Query for the most recent products, ordered by date_added
     new_products = Product.query.order_by(Product.date_added.desc()).limit(9).all()
+
+    # Query for products with a discount (where old_price > price)
     offer_products = (
-        Product.query.filter(Product.old_price > Product.price)
+        Product.query.filter(Product.old_price.isnot(None), Product.old_price > Product.price)
         .order_by(Product.date_added.desc())
         .limit(9)
         .all()
     )
+
     return render_template(
         "index.html",
         products=featured_products,
         new_products=new_products,
         offers=offer_products,
     )
+
 
 
 @main.route("/notify/<int:id>", methods=["GET", "POST"])
@@ -779,7 +786,17 @@ def reset_with_token(token):
 def product(id):
     product = Product.query.get_or_404(id)
     images = product.images
-    return render_template("product.html", product=product, images=images)
+    
+    # Get all tags associated with the product and organize them by category
+    tags_by_category = {}
+    for tag in product.tags:
+        category_name = tag.category.name
+        if category_name not in tags_by_category:
+            tags_by_category[category_name] = []
+        tags_by_category[category_name].append(tag.name)
+    
+    return render_template("product.html", product=product, images=images, tags_by_category=tags_by_category)
+
 
 
 @main.route("/add/<int:id>", methods=["POST"])
