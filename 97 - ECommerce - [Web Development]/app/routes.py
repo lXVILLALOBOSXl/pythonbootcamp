@@ -8,6 +8,7 @@ from .models import (
     OrderItem,
     ProductImage,
     Billing,
+    ProductTag
 )
 from .forms import *
 from flask_login import login_user, current_user, logout_user, login_required
@@ -18,6 +19,7 @@ from .utils import (
     send_reset_email,
     confirm_token,
     send_guest_confirmation_email,
+    normalize_text
 )
 from sqlalchemy.orm import joinedload
 import datetime
@@ -869,7 +871,57 @@ def cart():
     total = sum(item["price"] * item["quantity"] for item in cart)
     return render_template("cart.html", cart=cart, total=total)
 
-
 @main.route("/search")
 def search():
-    pass
+    query = request.args.get('query', '')
+    selected_tags = request.args.getlist('tag')  # Optional for future use
+
+    # Normalize the query
+    normalized_query = normalize_text(query)
+
+    # Fetch all products first
+    all_products = Product.query.all()
+
+    # Filter products in Python
+    products = [
+        product for product in all_products
+        if normalized_query in normalize_text(product.name) or
+           normalized_query in normalize_text(product.internal_sku) or
+           normalized_query in normalize_text(product.brand_sku)
+    ]
+
+    # Optional: Handle tag-based filtering if needed
+    if selected_tags:
+        products = [
+            product for product in products
+            if any(tag.id in map(int, selected_tags) for tag in product.tags)
+        ]
+
+    # Get all tags associated with the found products (optional)
+    tags = set()
+    for product in products:
+        for tag in product.tags:
+            tags.add(tag)
+
+    # Organize tags by category (optional)
+    tags_by_category = {}
+    for tag in tags:
+        category_name = tag.category.name
+        if category_name not in tags_by_category:
+            tags_by_category[category_name] = []
+        tags_by_category[category_name].append(tag)
+
+    return render_template(
+        "search.html",
+        products=products,
+        tags_by_category=tags_by_category,
+        query=query,
+        selected_tags=selected_tags
+    )
+
+
+
+
+
+
+

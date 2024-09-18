@@ -5,6 +5,7 @@ from . import mail
 from .models import Client
 import datetime
 from . import db
+import unicodedata
 
 
 def generate_confirmation_token(email):
@@ -60,3 +61,12 @@ def send_guest_confirmation_email(order):
     confirm_url = url_for("main.confirm_order_email", token=token, _external=True)
     html = render_template("confirm_order.html", confirm_url=confirm_url, order=order)
     send_email(order.email, "Confirm Your Order", html)
+
+
+def normalize_text(text):
+    # Convert to lowercase
+    text = text.lower()
+    # Normalize text to NFD (Normalization Form Decomposed)
+    normalized_text = unicodedata.normalize('NFD', text)
+    # Remove accents and diacritics
+    return ''.join(c for c in normalized_text if unicodedata.category(c) != 'Mn')
